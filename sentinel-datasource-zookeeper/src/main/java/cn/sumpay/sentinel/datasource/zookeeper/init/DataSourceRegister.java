@@ -70,18 +70,18 @@ public class DataSourceRegister {
     
     private static <T> ReadableDataSource<String, T> readDataSource(String dataId, Converter<String,T> converter) {
         if (ZkRuleConfig.isGroupId()) {
-            return new ZookeeperReadableDataSource<>(ZkRuleConfig.getRemoteAddress(), ZkRuleConfig.getGroupId(), dataId, converter);
+            return new ZookeeperReadableDataSource<>(ZkRuleConfig.getGroupId(), dataId, converter);
         } else {
-            return new ZookeeperReadableDataSource<>(ZkRuleConfig.getRemoteAddress(),dataId,converter);
+            return new ZookeeperReadableDataSource<>(dataId,converter);
             
         }
     }
 
     private static <S> ZookeeperWritableDataSource<S, byte[]> writablDataSource(String dataId, Converter<S, byte[]> converter) {
         if (ZkRuleConfig.isGroupId()) {
-            return new ZookeeperWritableDataSource<>(ZkRuleConfig.getRemoteAddress(), ZkRuleConfig.getGroupId(), dataId, converter);
+            return new ZookeeperWritableDataSource<>(ZkRuleConfig.getGroupId(), dataId, converter);
         } else {
-            return new ZookeeperWritableDataSource<>(ZkRuleConfig.getRemoteAddress(), dataId, converter);
+            return new ZookeeperWritableDataSource<>(dataId, converter);
         }
     }
 

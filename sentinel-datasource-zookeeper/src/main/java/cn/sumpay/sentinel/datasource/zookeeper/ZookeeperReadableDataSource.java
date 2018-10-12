@@ -5,6 +5,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.recipes.cache.ChildData;
+import org.apache.curator.framework.recipes.cache.NodeCache;
+import org.apache.curator.framework.recipes.cache.NodeCacheListener;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.data.Stat;
+
 import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.datasource.Converter;
@@ -13,23 +20,11 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 
 import cn.sumpay.sentinel.datasource.zookeeper.util.Util;
 
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.NodeCache;
-import org.apache.curator.framework.recipes.cache.NodeCacheListener;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.data.Stat;
-
 /**
  * A read-only {@code DataSource} with ZooKeeper backend.
  *
  */
 public class ZookeeperReadableDataSource<T> extends AbstractDataSource<String, T> {
-
-    private static final int RETRY_TIMES = 3;
-    private static final int SLEEP_TIME = 1000;
 
     private final ExecutorService pool = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
         new ArrayBlockingQueue<Runnable>(1), new NamedThreadFactory("sentinel-zookeeper-ds-update"),
@@ -41,32 +36,32 @@ public class ZookeeperReadableDataSource<T> extends AbstractDataSource<String, T
     private CuratorFramework zkClient = null;
     private NodeCache nodeCache = null;
 
-    public ZookeeperReadableDataSource(final String serverAddr, final String path, Converter<String, T> parser) {
+    public ZookeeperReadableDataSource(final String path, Converter<String, T> parser) {
         super(parser);
-        if (StringUtil.isBlank(serverAddr) || StringUtil.isBlank(path)) {
-            throw new IllegalArgumentException(String.format("Bad argument: serverAddr=[%s], path=[%s]", serverAddr, path));
+        if (StringUtil.isBlank(path)) {
+            throw new IllegalArgumentException(String.format("Bad argument: path=[%s]", path));
         }
         this.path = Util.getPath(path);
 
-        init(serverAddr);
+        init();
     }
 
     /**
      * This constructor is Nacos-style.
      */
-    public ZookeeperReadableDataSource(final String serverAddr, final String groupId, final String dataId,
+    public ZookeeperReadableDataSource(final String groupId, final String dataId,
                                Converter<String, T> parser) {
         super(parser);
-        if (StringUtil.isBlank(serverAddr) || StringUtil.isBlank(groupId) || StringUtil.isBlank(dataId)) {
-            throw new IllegalArgumentException(String.format("Bad argument: serverAddr=[%s], groupId=[%s], dataId=[%s]", serverAddr, groupId, dataId));
+        if (StringUtil.isBlank(groupId) || StringUtil.isBlank(dataId)) {
+            throw new IllegalArgumentException(String.format("Bad argument: groupId=[%s], dataId=[%s]", groupId, dataId));
         }
         this.path = Util.getPath(groupId, dataId);
 
-        init(serverAddr);
+        init();
     }
 
-    private void init(final String serverAddr) {
-        initZookeeperr(serverAddr);
+    private void init() {
+        initZookeeperr();
         loadInitialConfig();
     }
 
@@ -82,22 +77,21 @@ public class ZookeeperReadableDataSource<T> extends AbstractDataSource<String, T
         }
     }
 
-    private void initZookeeperr(final String serverAddr) {
+    private void initZookeeperr() {
         try {
-            this.zkClient = CuratorFrameworkFactory.newClient(serverAddr, new ExponentialBackoffRetry(SLEEP_TIME, RETRY_TIMES));
-            this.zkClient.start();
+            this.zkClient = ZkClient.zkClient();
             Stat stat = this.zkClient.checkExists().forPath(this.path);
             if (stat == null) {
                 this.zkClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT).forPath(this.path, null);
             }
-            initZookeeperListener(serverAddr);
+            initZookeeperListener();
         } catch (Exception e) {
             RecordLog.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
     }
     
-    private void initZookeeperListener(final String serverAddr) {
+    private void initZookeeperListener() {
         try {
 
             this.listener = new NodeCacheListener() {
@@ -109,8 +103,7 @@ public class ZookeeperReadableDataSource<T> extends AbstractDataSource<String, T
 
                         configInfo = new String(childData.getData());
                     }
-                    RecordLog.info(String.format("[ZookeeperDataSource] New property value received for (%s, %s): %s",
-                        serverAddr, path, configInfo));
+                    RecordLog.info(String.format("[ZookeeperDataSource] New property value received for (%s): %s", path, configInfo));
                     T newValue = ZookeeperReadableDataSource.this.parser.convert(configInfo);
                     // Update the new value to the property.
                     getProperty().updateValue(newValue);

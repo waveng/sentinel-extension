@@ -7,7 +7,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 public class ZkRuleConfig {
     public static final String REMOTE_ADDRESS = "csp.sentinel.datasource.address";
     
-    public static final String GROUP_ID = "csp.sentinel.datasource.groupId";
+    public static final String GROUP_ID = "csp.sentinel.datasource.groupid";
     
     public static final String FLOW_DATA_ID = "csp.sentinel.datasource.dataid.flow";
     
@@ -17,55 +17,67 @@ public class ZkRuleConfig {
     
     public static final String AUTHORITY_DATA_ID = "csp.sentinel.datasource.dataid.authority";
     
+
+    public static final String DEFAULT_FLOW_DATAID = "default-dataId-flow";
+    public static final String DEFAULT_DEGRADE_DATAID = "default-dataId-degrade";
+    public static final String DEFAULT_SYSTEM_DATAID = "defaul-dataIdt-system";
+    public static final String DEFAULT_AUTHORITY_DATAID = "default-dataId-authority";
+    
     static{
+        initialize();
         loadProps();
+    }
+    
+    private static void initialize() {
+        
+        SentinelConfig.setConfigIfAbsent(GROUP_ID, SentinelConfig.getAppName());
+        SentinelConfig.setConfigIfAbsent(FLOW_DATA_ID, DEFAULT_FLOW_DATAID);
+        SentinelConfig.setConfigIfAbsent(DEGRADE_DATA_ID, DEFAULT_DEGRADE_DATAID);
+        SentinelConfig.setConfigIfAbsent(SYSTEM_DATA_ID, DEFAULT_SYSTEM_DATAID);
+        SentinelConfig.setConfigIfAbsent(AUTHORITY_DATA_ID, DEFAULT_AUTHORITY_DATAID);
     }
     
     private static void loadProps() {
         try {
-            String systemValue = System.getProperty(REMOTE_ADDRESS);
-            if (!StringUtil.isEmpty(systemValue)) {
-                SentinelConfig.setConfig(REMOTE_ADDRESS, systemValue);
+            if (!StringUtil.isEmpty(System.getProperty(REMOTE_ADDRESS))) {
+                SentinelConfig.setConfig(REMOTE_ADDRESS, System.getProperty(REMOTE_ADDRESS));
             }
         } catch (Exception e) {
             RecordLog.info(e.getMessage(), e);
         }
         try {
-            String systemValue = System.getProperty(GROUP_ID);
-            if (!StringUtil.isEmpty(systemValue)) {
-                SentinelConfig.setConfig(GROUP_ID, systemValue);
+            if (!StringUtil.isEmpty(System.getProperty(GROUP_ID))) {
+                SentinelConfig.setConfig(GROUP_ID, System.getProperty(GROUP_ID));
+            }
+        } catch (Exception e) {
+            RecordLog.info(e.getMessage(), e);
+        }
+        
+        try {
+            if (!StringUtil.isEmpty(System.getProperty(FLOW_DATA_ID))) {
+                SentinelConfig.setConfig(FLOW_DATA_ID, System.getProperty(FLOW_DATA_ID));
+            }
+        } catch (Exception e) {
+            RecordLog.info(e.getMessage(), e);
+        }
+        
+        try {
+            if (!StringUtil.isEmpty(System.getProperty(DEGRADE_DATA_ID))) {
+                SentinelConfig.setConfig(DEGRADE_DATA_ID, System.getProperty(DEGRADE_DATA_ID));
             }
         } catch (Exception e) {
             RecordLog.info(e.getMessage(), e);
         }
         try {
-            String systemValue = System.getProperty(FLOW_DATA_ID);
-            if (!StringUtil.isEmpty(systemValue)) {
-                SentinelConfig.setConfig(FLOW_DATA_ID, systemValue);
+            if (!StringUtil.isEmpty(System.getProperty(SYSTEM_DATA_ID))) {
+                SentinelConfig.setConfig(SYSTEM_DATA_ID, System.getProperty(SYSTEM_DATA_ID));
             }
         } catch (Exception e) {
             RecordLog.info(e.getMessage(), e);
         }
         try {
-            String systemValue = System.getProperty(DEGRADE_DATA_ID);
-            if (!StringUtil.isEmpty(systemValue)) {
-                SentinelConfig.setConfig(DEGRADE_DATA_ID, systemValue);
-            }
-        } catch (Exception e) {
-            RecordLog.info(e.getMessage(), e);
-        }
-        try {
-            String systemValue = System.getProperty(SYSTEM_DATA_ID);
-            if (!StringUtil.isEmpty(systemValue)) {
-                SentinelConfig.setConfig(SYSTEM_DATA_ID, systemValue);
-            }
-        } catch (Exception e) {
-            RecordLog.info(e.getMessage(), e);
-        }
-        try {
-            String systemValue = System.getProperty(AUTHORITY_DATA_ID);
-            if (!StringUtil.isEmpty(systemValue)) {
-                SentinelConfig.setConfig(AUTHORITY_DATA_ID, systemValue);
+            if (!StringUtil.isEmpty(System.getProperty(AUTHORITY_DATA_ID))) {
+                SentinelConfig.setConfig(AUTHORITY_DATA_ID, System.getProperty(AUTHORITY_DATA_ID));
             }
         } catch (Exception e) {
             RecordLog.info(e.getMessage(), e);
@@ -107,27 +119,27 @@ public class ZkRuleConfig {
     }
     
     public static void setRemoteAddress(String remoteAddress) {
-        SentinelConfig.setConfigIfAbsent(REMOTE_ADDRESS, remoteAddress);
+        SentinelConfig.setConfig(REMOTE_ADDRESS, remoteAddress);
     }
     
     public static void setGroupId(String groupId) {
-        SentinelConfig.setConfigIfAbsent(GROUP_ID, groupId);
+        SentinelConfig.setConfig(GROUP_ID, groupId);
     }
     
     public static void setFlowDataId(String flowDataId) {
-        SentinelConfig.setConfigIfAbsent(FLOW_DATA_ID, flowDataId);
+        SentinelConfig.setConfig(FLOW_DATA_ID, flowDataId);
     }
     
     public static void setDegradeDataId(String degradeDataId) {
-        SentinelConfig.setConfigIfAbsent(DEGRADE_DATA_ID, degradeDataId);
+        SentinelConfig.setConfig(DEGRADE_DATA_ID, degradeDataId);
     }
     
     public static void setSystemDataId(String systemDataId) {
-        SentinelConfig.setConfigIfAbsent(SYSTEM_DATA_ID, systemDataId);
+        SentinelConfig.setConfig(SYSTEM_DATA_ID, systemDataId);
     }
     
     public static void setAuthorityDataId(String val) {
-        SentinelConfig.setConfigIfAbsent(AUTHORITY_DATA_ID, val);
+        SentinelConfig.setConfig(AUTHORITY_DATA_ID, val);
     }
     
     public static boolean isRemoteAddress() {
