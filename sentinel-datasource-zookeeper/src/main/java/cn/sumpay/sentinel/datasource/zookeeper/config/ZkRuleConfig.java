@@ -119,27 +119,39 @@ public class ZkRuleConfig {
     }
     
     public static void setRemoteAddress(String remoteAddress) {
-        SentinelConfig.setConfig(REMOTE_ADDRESS, remoteAddress);
+        if(StringUtil.isNotBlank(remoteAddress)){
+            SentinelConfig.setConfig(REMOTE_ADDRESS, remoteAddress);
+        }
     }
     
     public static void setGroupId(String groupId) {
-        SentinelConfig.setConfig(GROUP_ID, groupId);
+        if(StringUtil.isNotBlank(groupId)){
+            SentinelConfig.setConfig(GROUP_ID, groupId);
+        }
     }
     
     public static void setFlowDataId(String flowDataId) {
-        SentinelConfig.setConfig(FLOW_DATA_ID, flowDataId);
+        if(StringUtil.isNotBlank(flowDataId)){
+            SentinelConfig.setConfig(FLOW_DATA_ID, flowDataId);
+        }
     }
     
     public static void setDegradeDataId(String degradeDataId) {
-        SentinelConfig.setConfig(DEGRADE_DATA_ID, degradeDataId);
+        if(StringUtil.isNotBlank(degradeDataId)){
+            SentinelConfig.setConfig(DEGRADE_DATA_ID, degradeDataId);
+        }
     }
     
     public static void setSystemDataId(String systemDataId) {
-        SentinelConfig.setConfig(SYSTEM_DATA_ID, systemDataId);
+        if(StringUtil.isNotBlank(systemDataId)){
+            SentinelConfig.setConfig(SYSTEM_DATA_ID, systemDataId);
+        }
     }
     
-    public static void setAuthorityDataId(String val) {
-        SentinelConfig.setConfig(AUTHORITY_DATA_ID, val);
+    public static void setAuthorityDataId(String authorityDataId) {
+        if(StringUtil.isNotBlank(authorityDataId)){
+            SentinelConfig.setConfig(AUTHORITY_DATA_ID, authorityDataId);
+        }
     }
     
     public static boolean isRemoteAddress() {

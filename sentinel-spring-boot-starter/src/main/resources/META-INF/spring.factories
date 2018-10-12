@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.sumpay.sentinel.springboot.SentineInitAutoConfiguration,\
+cn.sumpay.sentinel.springboot.SentinelAutoConfiguration,\
+cn.sumpay.sentinel.springboot.SentinelZkAutoConfiguration,\
+cn.sumpay.sentinel.springboot.SentinelAspectAutoConfiguration

@@ -158,5 +158,7 @@
 	</build>
 	<modules>
 		<module>sentinel-datasource-zookeeper</module>
+		<module>sentinel-spring-boot-starter</module>
+		<module>sentinel-spring-boot-demo</module>
 	</modules>
 </project>

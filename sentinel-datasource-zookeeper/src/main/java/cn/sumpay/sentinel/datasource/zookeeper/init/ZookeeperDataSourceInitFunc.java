@@ -1,10 +1,12 @@
 package cn.sumpay.sentinel.datasource.zookeeper.init;
 
 import com.alibaba.csp.sentinel.init.InitFunc;
+import com.alibaba.csp.sentinel.init.InitOrder;
 import com.alibaba.csp.sentinel.log.RecordLog;
 
 import cn.sumpay.sentinel.datasource.zookeeper.config.ZkRuleConfig;
 
+@InitOrder(InitOrder.HIGHEST_PRECEDENCE)
 public class ZookeeperDataSourceInitFunc implements InitFunc {
 
     @Override
