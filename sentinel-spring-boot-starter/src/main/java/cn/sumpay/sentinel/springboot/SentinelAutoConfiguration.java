@@ -1,6 +1,7 @@
 package cn.sumpay.sentinel.springboot;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ public class SentinelAutoConfiguration {
    
     @Bean
     @ConditionalOnMissingBean(annotation = EnableSentinel.class)
+    @ConditionalOnClass(name = "com.alibaba.csp.sentinel.adapter.dubbo.SentinelDubboConsumerFilter")
     public ConsumerConfig disabledConsumerFilter() {
         ConsumerConfig consumerConfig = new ConsumerConfig();
         consumerConfig.setFilter("-sentinel.dubbo.consumer.filter,-dubbo.application.context.name.filter");
@@ -29,6 +31,7 @@ public class SentinelAutoConfiguration {
     
     @Bean
     @ConditionalOnMissingBean(annotation = EnableSentinel.class)
+    @ConditionalOnClass(name = "com.alibaba.csp.sentinel.adapter.dubbo.SentinelDubboProviderFilter")
     public ProviderConfig disabledProviderFilter() {
         ProviderConfig config = new ProviderConfig();
         config.setFilter("-sentinel.dubbo.provider.filter,-dubbo.application.context.name.filter");
