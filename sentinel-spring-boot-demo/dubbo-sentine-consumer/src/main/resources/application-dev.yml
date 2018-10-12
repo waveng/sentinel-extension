@@ -1,0 +1,26 @@
+server:
+  port: 19911
+  
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true       
+  dubbo:
+    application: 
+      name: dubbo-sentine-consumer
+      owner: wangbo
+      environment: develop
+    registry: 
+      address: zookeeper://192.168.16.2:2181
+    protocol: 
+      name: dubbo
+      port: 20811
+csp:
+  sentinel:
+    application:
+      dashboard: 127.0.0.1:8080
+      name: 
+      port: 8723
+    zookeeper:
+      address: 192.168.16.2:2181
