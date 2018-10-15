@@ -1,10 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cn.sumpay.sentinel</groupId>
+	<groupId>io.github.waveng.sentinel</groupId>
 	<artifactId>sentinel-extension</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	
+	<url>https://github.com/waveng/sentinel-extension</url>
+	<name>sentinel-extension</name>
+	<description>alibaba sentinel extension</description>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
@@ -154,11 +159,86 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.version}</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>false</skip>
+					<show>public</show>
+					<charset>${project.build.sourceEncoding}</charset>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<docencoding>${project.build.sourceEncoding}</docencoding>
+					<links>
+						<link>http://docs.oracle.com/javase/6/docs/api</link>
+					</links>
+				</configuration>
+			</plugin>
+			 -->
+			<!-- 
+			<plugin>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${maven.gpg.version}</version>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
 		</plugins>
 	</build>
+	<scm>
+		<connection>scm:git:git@github.com:waveng/sentinel-extension.git</connection>
+		<developerConnection>scm:git:git@github.com:waveng/sentinel-extension.git</developerConnection>
+		<url>https://github.com/waveng/sentinel-extension.git</url>
+	</scm>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>wangbo</id>
+			<name>wangbo</name>
+			<email>wangle_r@163.com</email>
+		</developer>
+	</developers>
 	<modules>
 		<module>sentinel-datasource-zookeeper</module>
 		<module>sentinel-spring-boot-starter</module>
 		<module>sentinel-spring-boot-demo</module>
 	</modules>
+	<distributionManagement>
+         <snapshotRepository>
+             <id>sonatype-nexus-snapshots</id>
+             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+         </snapshotRepository>
+         <repository>
+             <id>sonatype-nexus-snapshots</id>
+             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+         </repository>
+     </distributionManagement>
+	
 </project>

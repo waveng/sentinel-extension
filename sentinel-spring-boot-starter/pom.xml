@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>cn.sumpay.sentinel</groupId>
+		<groupId>io.github.waveng.sentinel</groupId>
 		<artifactId>sentinel-extension</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -55,7 +55,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>cn.sumpay.sentinel</groupId>
+			<groupId>io.github.waveng.sentinel</groupId>
 			<artifactId>sentinel-datasource-zookeeper</artifactId>
 			<version>${sentinel.datasource.zookeeper.version}</version>
 		</dependency>
