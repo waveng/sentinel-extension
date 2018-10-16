@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.csp.sentinel.command.vo.NodeVo;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.taobao.csp.sentinel.dashboard.client.spi.DefaultSentinelApiClient;
+import com.taobao.csp.sentinel.dashboard.client.spi.SentinelApiClientDataSource;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.AuthorityRuleEntity;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
@@ -28,7 +28,7 @@ import io.github.waveng.sentinel.datasource.zookeeper.util.ConverterWritUtil;
  * @version 0.0.1
  * @since 0.0.1
  */
-public class WritableSentinelApiClient extends DefaultSentinelApiClient{
+public class WritableSentinelApiClient extends SentinelApiClientDataSource{
     private static Logger logger = LoggerFactory.getLogger(WritableSentinelApiClient.class);
     
     private Readable<String, List<FlowRuleEntity>> readableFlow;

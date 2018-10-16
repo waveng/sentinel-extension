@@ -20,7 +20,6 @@ csp:
   sentinel:
     application:
       dashboard: 127.0.0.1:8080
-      name: 
       port: 8723
     zookeeper:
       address: 192.168.16.2:2181

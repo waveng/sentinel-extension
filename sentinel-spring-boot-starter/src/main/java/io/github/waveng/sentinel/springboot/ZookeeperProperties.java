@@ -7,6 +7,10 @@ package io.github.waveng.sentinel.springboot;
  */
 public class ZookeeperProperties {
         /**
+         * 运行在 client 还是 dashboard;
+         */
+        private String runMode;
+        /**
          * zk访问地址
          */
         private String address;
@@ -30,6 +34,16 @@ public class ZookeeperProperties {
          * 黑白名单规则节点
          */
         private String dataidAuthority;
+
+        
+        
+        public String getRunMode() {
+            return runMode;
+        }
+
+        public void setRunMode(String runMode) {
+            this.runMode = runMode;
+        }
 
         public String getAddress() {
             return address;

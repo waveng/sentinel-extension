@@ -20,6 +20,7 @@ public class ApplicationProperties {
      * 应用名称，会在控制台中显示
      */
     private String name;
+    
 
     public String getPort() {
         return port;

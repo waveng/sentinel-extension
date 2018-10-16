@@ -10,6 +10,11 @@ import com.alibaba.csp.sentinel.util.StringUtil;
  * @since 0.0.1
  */
 public class ZkRuleConfig {
+    /**
+     * 运行在 client or dashboard
+     */
+    public static final String RUN_MODE = "csp.sentinel.datasource.mode";
+    
     public static final String REMOTE_ADDRESS = "csp.sentinel.datasource.address";
     
     public static final String GROUP_ID = "csp.sentinel.datasource.groupid";
@@ -35,6 +40,7 @@ public class ZkRuleConfig {
     
     private static void initialize() {
         
+        SentinelConfig.setConfigIfAbsent(RUN_MODE, "client");
         SentinelConfig.setConfigIfAbsent(GROUP_ID, SentinelConfig.getAppName());
         SentinelConfig.setConfigIfAbsent(FLOW_DATA_ID, DEFAULT_FLOW_DATAID);
         SentinelConfig.setConfigIfAbsent(DEGRADE_DATA_ID, DEFAULT_DEGRADE_DATAID);
@@ -88,6 +94,14 @@ public class ZkRuleConfig {
             RecordLog.info(e.getMessage(), e);
         }
         
+        try {
+            if (!StringUtil.isEmpty(System.getProperty(RUN_MODE))) {
+                SentinelConfig.setConfig(RUN_MODE, System.getProperty(RUN_MODE));
+            }
+        } catch (Exception e) {
+            RecordLog.info(e.getMessage(), e);
+        }
+        
         
         RecordLog.info(REMOTE_ADDRESS + " value: " + SentinelConfig.getConfig(REMOTE_ADDRESS));
         RecordLog.info(GROUP_ID + " value: " + SentinelConfig.getConfig(GROUP_ID));
@@ -127,6 +141,16 @@ public class ZkRuleConfig {
         if(StringUtil.isNotBlank(remoteAddress)){
             SentinelConfig.setConfig(REMOTE_ADDRESS, remoteAddress);
         }
+    }
+    
+    public static void setRunMode(String mode) {
+        if(StringUtil.isNotBlank(mode)){
+            SentinelConfig.setConfig(RUN_MODE, mode);
+        }
+    }
+    
+    public static boolean isClient() {
+          return SentinelConfig.getConfig(RUN_MODE) == "client";
     }
     
     public static void setGroupId(String groupId) {

@@ -1,18 +1,24 @@
 package io.github.waveng.sentinel.springboot;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 
-import com.alibaba.dubbo.config.ConsumerConfig;
-import com.alibaba.dubbo.config.ProviderConfig;
+import com.alibaba.csp.sentinel.config.SentinelConfig;
+import com.alibaba.csp.sentinel.transport.config.TransportConfig;
+import com.alibaba.csp.sentinel.util.StringUtil;
 
-import io.github.waveng.sentinel.springboot.annotation.EnableSentinel;
+import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
+import io.github.waveng.sentinel.datasource.zookeeper.dashboard.WritableSentinelApiClient;
 
 /**
  * 
@@ -20,28 +26,67 @@ import io.github.waveng.sentinel.springboot.annotation.EnableSentinel;
  * @version 0.0.1
  * @since 0.0.1
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
 @EnableConfigurationProperties(SentinelProperties.class)
-@AutoConfigureBefore({SentineInitAutoConfiguration.class, SentinelZkAutoConfiguration.class, SentinelAspectAutoConfiguration.class})
+@AutoConfigureBefore({SentineFilterAutoConfiguration.class, SentinelAspectAutoConfiguration.class})
 public class SentinelAutoConfiguration {
-   
-    @Bean
-    @ConditionalOnMissingBean(annotation = EnableSentinel.class)
-    @ConditionalOnClass(name = "com.alibaba.csp.sentinel.adapter.dubbo.SentinelDubboConsumerFilter")
-    public ConsumerConfig disabledConsumerFilter() {
-        ConsumerConfig consumerConfig = new ConsumerConfig();
-        consumerConfig.setFilter("-sentinel.dubbo.consumer.filter,-dubbo.application.context.name.filter");
-        return consumerConfig;
+    @Autowired
+    private Environment env;
+    
+    @Autowired
+    private SentinelProperties sentinelProperties;
+    
+    @PostConstruct
+    public void init(){
+        initAppConfig();
+        initZkConfig();
+    }
+    public void initZkConfig() {
+        ZookeeperProperties zk = sentinelProperties.getZookeeper();
+        if(zk == null){
+            return ;
+        }
+        if(StringUtil.isNotBlank(zk.getAddress())){
+            ZkRuleConfig.setRunMode(zk.getRunMode());
+            ZkRuleConfig.setRemoteAddress(zk.getAddress());
+            ZkRuleConfig.setFlowDataId(zk.getDataidFlow());
+            ZkRuleConfig.setDegradeDataId(zk.getDataidDegrade());
+            ZkRuleConfig.setSystemDataId(zk.getDataidSystem());
+            ZkRuleConfig.setAuthorityDataId(zk.getDataidAuthority());
+        }
     }
     
-    @Bean
-    @ConditionalOnMissingBean(annotation = EnableSentinel.class)
-    @ConditionalOnClass(name = "com.alibaba.csp.sentinel.adapter.dubbo.SentinelDubboProviderFilter")
-    public ProviderConfig disabledProviderFilter() {
-        ProviderConfig config = new ProviderConfig();
-        config.setFilter("-sentinel.dubbo.provider.filter,-dubbo.application.context.name.filter");
-        return config;
+    public void initAppConfig() {
+        ApplicationProperties application = sentinelProperties.getApplication();
+        if(application == null){
+            return ;
+        }
+        if(StringUtil.isBlank(System.getProperty("project.name"))){
+            String name = application.getName();
+            if (StringUtil.isBlank(application.getName())){
+                name = env.getProperty("spring.application.name");
+            }
+            if (StringUtil.isNotBlank(name)){
+                System.setProperty("project.name", name);
+            }
+        }
+        
+        if (StringUtil.isNotBlank(application.getDashboard()))
+            SentinelConfig.setConfig(TransportConfig.CONSOLE_SERVER, application.getDashboard());
+        if (StringUtil.isNotBlank(application.getPort()))
+            SentinelConfig.setConfig(TransportConfig.SERVER_PORT, application.getPort());
+    }
+    
+    @Configuration
+    @ConditionalOnClass(name={"com.taobao.csp.sentinel.dashboard.client.spi.SentinelClientDataSource"})
+    public class CreateSentinelClientDataSource{
+        
+        @Bean
+        @ConditionalOnProperty(prefix="csp.sentinel.zookeeper", name="run-mode", havingValue="dashboard")
+        public WritableSentinelApiClient sentinelClientDataSource(){
+            return new WritableSentinelApiClient();
+        }
     }
     
 }

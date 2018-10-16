@@ -1,5 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.github.waveng.sentinel.springboot.SentineInitAutoConfiguration,\
 io.github.waveng.sentinel.springboot.SentinelAutoConfiguration,\
-io.github.waveng.sentinel.springboot.SentinelZkAutoConfiguration,\
+io.github.waveng.sentinel.springboot.SentineFilterAutoConfiguration,\
 io.github.waveng.sentinel.springboot.SentinelAspectAutoConfiguration
