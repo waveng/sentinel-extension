@@ -47,6 +47,10 @@
 			<groupId>com.alibaba.csp</groupId>
 			<artifactId>sentinel-dubbo-adapter</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-dashboard</artifactId>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.curator</groupId>

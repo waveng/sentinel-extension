@@ -1,1 +1,1 @@
-cn.sumpay.sentinel.datasource.zookeeper.init.ZookeeperDataSourceInitFunc
+io.github.waveng.sentinel.datasource.zookeeper.init.ZookeeperDataSourceInitFunc

@@ -29,4 +29,8 @@ public class Util {
         }
         return path;
     }
+    
+    public static String getTypePath(String app, String ip, String port, String typePath) {
+        return app + "/" + ip +":"+ port + "/" + typePath;
+    }
 }
