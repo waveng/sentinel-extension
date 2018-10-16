@@ -85,6 +85,7 @@ public class DemoServiceImpl{
 
 ### 启用 sentinel-datasource-zookeeper
 当配置了 zookeeper.address 配置时启用，否则不启用
+```
 zookeeper:
       address: 192.168.1.2:2181
 ```
