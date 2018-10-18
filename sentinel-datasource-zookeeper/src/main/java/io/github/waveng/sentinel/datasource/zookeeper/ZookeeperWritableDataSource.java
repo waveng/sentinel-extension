@@ -3,6 +3,7 @@ package io.github.waveng.sentinel.datasource.zookeeper;
 import com.alibaba.csp.sentinel.datasource.Converter;
 
 import io.github.waveng.sentinel.datasource.AbstractWritable;
+import io.github.waveng.sentinel.datasource.NodeType;
 import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
 /**
  * 
@@ -12,12 +13,12 @@ import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
  */
 public class ZookeeperWritableDataSource<T> extends AbstractWritable<T, byte[]> {
     
-    private final String typePath;
+    private final String nodeType;
     private ZkClient zkClient;
     
-    public ZookeeperWritableDataSource(String typePath, Converter<T, byte[]> parser) {
+    public ZookeeperWritableDataSource(final NodeType nodeType, Converter<T, byte[]> parser) {
         super(parser);
-        this.typePath = typePath;
+        this.nodeType = nodeType.toString();
         this.zkClient = ZkClientFactory.getZkClient();
     }
     
@@ -42,7 +43,7 @@ public class ZookeeperWritableDataSource<T> extends AbstractWritable<T, byte[]> 
         if (this.zkClient == null) {
             throw new IllegalStateException("Zookeeper has not been initialized or error occurred");
         }
-        byte[] data = zkClient.forPath(Util.getTypePath(app, ip, String.valueOf(port), this.typePath));
+        byte[] data = zkClient.forPath(Util.getTypePath(app, ip, String.valueOf(port), this.nodeType));
         String path = new String(data);
         if (zkClient.checkExists(path) == null) {
             zkClient.createForPath(path);

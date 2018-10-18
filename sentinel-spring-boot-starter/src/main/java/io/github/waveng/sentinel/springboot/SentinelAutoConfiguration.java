@@ -18,7 +18,7 @@ import com.alibaba.csp.sentinel.transport.config.TransportConfig;
 import com.alibaba.csp.sentinel.util.StringUtil;
 
 import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
-import io.github.waveng.sentinel.datasource.zookeeper.dashboard.WritableSentinelApiClient;
+import io.github.waveng.sentinel.datasource.zookeeper.dashboard.SentinelZkClientDataSource;
 
 /**
  * 
@@ -84,8 +84,8 @@ public class SentinelAutoConfiguration {
         
         @Bean
         @ConditionalOnProperty(prefix="csp.sentinel.zookeeper", name="run-mode", havingValue="dashboard")
-        public WritableSentinelApiClient sentinelClientDataSource(){
-            return new WritableSentinelApiClient();
+        public SentinelZkClientDataSource sentinelClientDataSource(){
+            return new SentinelZkClientDataSource();
         }
     }
     

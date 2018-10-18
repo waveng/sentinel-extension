@@ -3,6 +3,7 @@ package io.github.waveng.sentinel.datasource.zookeeper;
 import com.alibaba.csp.sentinel.datasource.Converter;
 
 import io.github.waveng.sentinel.datasource.AbstractReadable;
+import io.github.waveng.sentinel.datasource.NodeType;
 import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
 
 /**
@@ -12,13 +13,13 @@ import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
  */
 public class ZookeeperReadableDataSource<T> extends AbstractReadable<String, T> {
 
-    private final String typePath;
+    private final String nodeType;
 
     private ZkClient zkClient = null;
 
-    public ZookeeperReadableDataSource(final String typePath, Converter<String, T> parser) {
+    public ZookeeperReadableDataSource(final NodeType nodeType, Converter<String, T> parser) {
         super(parser);
-        this.typePath = typePath;
+        this.nodeType = nodeType.toString();
         this.zkClient = ZkClientFactory.getZkClient();
     }
 
@@ -47,7 +48,7 @@ public class ZookeeperReadableDataSource<T> extends AbstractReadable<String, T> 
         if (this.zkClient == null) {
             throw new IllegalStateException("Zookeeper has not been initialized or error occurred");
         }
-        byte[] data = zkClient.forPath(Util.getTypePath(app, ip, String.valueOf(port), this.typePath));
+        byte[] data = zkClient.forPath(Util.getTypePath(app, ip, String.valueOf(port), this.nodeType));
         String path = new String(data);
         if (zkClient.checkExists(path) == null) {
             zkClient.createForPath(path);

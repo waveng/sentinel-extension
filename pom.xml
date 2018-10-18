@@ -25,7 +25,7 @@
 		<maven.jacoco.version>0.8.1</maven.jacoco.version>
 
 		<fastjson.version>1.2.49</fastjson.version>
-		<com.alibaba.csp.varion>0.2.0</com.alibaba.csp.varion>
+		<com.alibaba.csp.varion>0.2.1-SNAPSHOT</com.alibaba.csp.varion>
 		<com.alibaba.csp.dashboard.varion>0.2.1-SNAPSHOT</com.alibaba.csp.dashboard.varion>
 		<dubbo.version>2.5.7</dubbo.version>
 		<zookeeper.version>3.4.13</zookeeper.version>
@@ -97,7 +97,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.csp</groupId>
-				<artifactId>sentinel-dashboard-client</artifactId>
+				<artifactId>sentinel-dashboard-datasource</artifactId>
 				<version>${com.alibaba.csp.dashboard.varion}</version>
 			</dependency>
 

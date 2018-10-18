@@ -15,7 +15,7 @@ public class DemoServiceImpl{
     @DubboConsumer(version="1.0.0", timeout = 30000)
     private DemoService demoService;
     
-    @SentinelResource(value = "sayHello", entryType = EntryType.OUT)
+    @SentinelResource( entryType = EntryType.OUT)
     public String sayHello(String name) {
         return demoService.sayHello(name);
     }

@@ -49,8 +49,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-dashboard-client</artifactId>
-			<scope>compile</scope>
+			<artifactId>sentinel-dashboard-datasource</artifactId>
 			<optional>true</optional>
 		</dependency>
 		

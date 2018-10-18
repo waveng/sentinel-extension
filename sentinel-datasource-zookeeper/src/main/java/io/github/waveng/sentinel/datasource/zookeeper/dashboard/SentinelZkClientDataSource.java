@@ -8,18 +8,18 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.csp.sentinel.command.vo.NodeVo;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.taobao.csp.sentinel.dashboard.client.spi.SentinelApiClientDataSource;
+import com.taobao.csp.sentinel.dashboard.client.datasource.SentinelApiClientDataSource;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.AuthorityRuleEntity;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.ParamFlowRuleEntity;
 import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.SystemRuleEntity;
 
-import io.github.waveng.sentinel.datasource.Writable;
+import io.github.waveng.sentinel.datasource.NodeType;
 import io.github.waveng.sentinel.datasource.Readable;
+import io.github.waveng.sentinel.datasource.Writable;
 import io.github.waveng.sentinel.datasource.zookeeper.ZookeeperReadableDataSource;
 import io.github.waveng.sentinel.datasource.zookeeper.ZookeeperWritableDataSource;
-import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
 import io.github.waveng.sentinel.datasource.zookeeper.util.ConverterReadUtil;
 import io.github.waveng.sentinel.datasource.zookeeper.util.ConverterWritUtil;
 /**
@@ -28,8 +28,8 @@ import io.github.waveng.sentinel.datasource.zookeeper.util.ConverterWritUtil;
  * @version 0.0.1
  * @since 0.0.1
  */
-public class WritableSentinelApiClient extends SentinelApiClientDataSource{
-    private static Logger logger = LoggerFactory.getLogger(WritableSentinelApiClient.class);
+public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
+    private static Logger logger = LoggerFactory.getLogger(SentinelZkClientDataSource.class);
     
     private Readable<String, List<FlowRuleEntity>> readableFlow;
     private Readable<String, List<DegradeRuleEntity>> readableDegrade;
@@ -41,12 +41,12 @@ public class WritableSentinelApiClient extends SentinelApiClientDataSource{
     private Writable<List<SystemRuleEntity>> writableSystem;
 //   private Writable<List<AuthorityRuleEntity>> writableAuthority = null;
     
-    public WritableSentinelApiClient() {
+    public SentinelZkClientDataSource() {
         super();
         initWritableFlow();
         initWritableDegradee();
         initWritableSystem();
-        //register2AuthorityRule();
+        initWritableAuthority();
         
         intiReadableFlow();
         intiReadableDegradee();
@@ -55,44 +55,44 @@ public class WritableSentinelApiClient extends SentinelApiClientDataSource{
     }
 
     private  void initWritableFlow() {
-        writableFlow = createWritable(ZkRuleConfig.FLOW_DATA_ID, ConverterWritUtil.FLOW_RULES_2BYTES);
+        writableFlow = createWritable(NodeType.NODE_FLOW, ConverterWritUtil.FLOW_RULES_2BYTES);
     }
 
     private  void initWritableDegradee() {
-        writableDegrade = createWritable(ZkRuleConfig.DEGRADE_DATA_ID, ConverterWritUtil.DEGRADE_RULE_2BYTES);
+        writableDegrade = createWritable(NodeType.NODE_DEGRADE, ConverterWritUtil.DEGRADE_RULE_2BYTES);
     }
 
     private  void initWritableSystem() {
-        writableSystem = createWritable(ZkRuleConfig.SYSTEM_DATA_ID, ConverterWritUtil.SYSTEM_RULE_2BYTES);
+        writableSystem = createWritable(NodeType.NODE_SYSTEM, ConverterWritUtil.SYSTEM_RULE_2BYTES);
     }
     
-//  private void initWritableAuthority() {
-//  writableAuthority = createWritable(ZkRuleConfig.getAuthorityDataId(), ConverterWritUtil.AUTHORITY_RULE_2BYTES);
-//}
+    private void initWritableAuthority() {
+//      writableAuthority = createWritable(NodeType.NODE_AUTHORITY, ConverterWritUtil.AUTHORITY_RULE_2BYTES);
+    }
     
     private  void intiReadableFlow() {
-        readableFlow = createReadable(ZkRuleConfig.FLOW_DATA_ID, ConverterReadUtil.CONVERTER_FLOW_RULES_ENTITY);
+        readableFlow = createReadable(NodeType.NODE_FLOW, ConverterReadUtil.CONVERTER_FLOW_RULES_ENTITY);
     }
 
     private  void intiReadableDegradee() {
-        readableDegrade = createReadable(ZkRuleConfig.DEGRADE_DATA_ID, ConverterReadUtil.CONVERTER_DEGRADE_RULE_ENTITY);
+        readableDegrade = createReadable(NodeType.NODE_DEGRADE, ConverterReadUtil.CONVERTER_DEGRADE_RULE_ENTITY);
     }
 
     private  void initReadableSystem() {
-        readableSystem = createReadable(ZkRuleConfig.SYSTEM_DATA_ID, ConverterReadUtil.CONVERTER_SYSTEM_RULE_ENTITY);
+        readableSystem = createReadable(NodeType.NODE_DEGRADE, ConverterReadUtil.CONVERTER_SYSTEM_RULE_ENTITY);
     }
     
     private  void initReadableAuthority() {
-        readableAuthority = createReadable(ZkRuleConfig.SYSTEM_DATA_ID, ConverterReadUtil.CONVERTER_AUTHORITY_RULE_ENTITY);
+        readableAuthority = createReadable(NodeType.NODE_AUTHORITY, ConverterReadUtil.CONVERTER_AUTHORITY_RULE_ENTITY);
     }
 
 
-    private static <S> Writable<S> createWritable(String typePath, Converter<S, byte[]> converter) {
-        return new ZookeeperWritableDataSource<>(typePath, converter);
+    private static <S> Writable<S> createWritable(NodeType nodeType, Converter<S, byte[]> converter) {
+        return new ZookeeperWritableDataSource<>(nodeType, converter);
     }
     
-    private static <T> Readable<String, T> createReadable(String typePath, Converter<String, T> converter) {
-        return new ZookeeperReadableDataSource<>(typePath, converter);
+    private static <T> Readable<String, T> createReadable(NodeType nodeType, Converter<String, T> converter) {
+        return new ZookeeperReadableDataSource<>(nodeType, converter);
     }
 
     @Override

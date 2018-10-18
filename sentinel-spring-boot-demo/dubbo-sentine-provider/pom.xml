@@ -36,6 +36,24 @@
 		<dependency>
 			<groupId>io.github.waveng.sentinel</groupId>
 			<artifactId>sentinel-spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.alibaba.csp</groupId>
+					<artifactId>sentinel-dubbo-adapter</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-core</artifactId>
+			</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-annotation-aspectj</artifactId>
+			</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-parameter-flow-control</artifactId>
 		</dependency>
 	</dependencies>
 

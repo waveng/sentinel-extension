@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.dubbo.config.annotation.Service;
 
 import io.github.waveng.sentinel.dubbo.api.DemoService;
@@ -14,6 +15,7 @@ import io.github.waveng.sentinel.dubbo.api.DemoService;
 public class DemoServiceImpl implements DemoService{
 
     @Override
+    @SentinelResource
     public String sayHello(String name) {
         String res = new Date() + "hello " + name;
         System.err.println(res);
