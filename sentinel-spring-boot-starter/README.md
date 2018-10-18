@@ -1,5 +1,5 @@
 # sentinel-extension
-## spring boot static
+## spring boot starter
 ### 配置项
 ```
 csp:
@@ -90,3 +90,12 @@ zookeeper:
       address: 192.168.1.2:2181
 ```
 
+### sentinel-dashboard 支持
+要在控制台中推送动态规则，也可以引用该包，但仅支持本人修改后的 dashboard
+见分支 https://github.com/waveng/Sentinel/tree/custom-dashboard
+需要在配置中添加配置启用
+
+```
+csp.sentinel.zookeeper.run-mode=dashboard
+csp.sentinel.zookeeper.address=192.168.16.2:2181
+```

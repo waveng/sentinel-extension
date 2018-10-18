@@ -35,7 +35,7 @@
       group-id: 
  ```
   
-### 控制台端引用
+### sentinel-dashboard 支持
 要在控制台中推送动态规则，也可以引用该包，但仅支持本人修改后的 dashboard, 需要引用 sentinel-dashboard-client 支持，
 见分支 https://github.com/waveng/Sentinel/tree/custom-dashboard
 需要在配置中添加配置启用
