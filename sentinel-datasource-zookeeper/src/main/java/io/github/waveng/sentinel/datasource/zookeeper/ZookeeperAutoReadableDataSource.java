@@ -147,7 +147,7 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
             this.nodeCache.getListenable().removeListener(listener);
             this.nodeCache.close();
         }
-        if (this.zkClient == null) {
+        if (this.zkClient != null) {
             this.zkClient.close();
         }
         pool.shutdown();

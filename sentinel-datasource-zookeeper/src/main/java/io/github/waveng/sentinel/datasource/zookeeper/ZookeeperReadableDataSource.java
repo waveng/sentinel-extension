@@ -26,7 +26,7 @@ public class ZookeeperReadableDataSource<T> extends AbstractReadable<String, T> 
 
     @Override
     public void close() throws Exception {
-        if (this.zkClient == null) {
+        if (this.zkClient != null) {
             this.zkClient.close();
         }
     }
