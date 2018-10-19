@@ -49,6 +49,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-demo-parameter-flow-control</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
 			<artifactId>sentinel-dashboard-datasource</artifactId>
 			<optional>true</optional>
 		</dependency>

@@ -118,6 +118,11 @@
 				<artifactId>sentinel-transport-netty-http</artifactId>
 				<version>${com.alibaba.csp.varion}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.alibaba.csp</groupId>
+				<artifactId>sentinel-demo-parameter-flow-control</artifactId>
+				<version>${com.alibaba.csp.varion}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>junit</groupId>

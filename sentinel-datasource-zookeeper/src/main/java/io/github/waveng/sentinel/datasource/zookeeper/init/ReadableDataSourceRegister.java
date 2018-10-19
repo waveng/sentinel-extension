@@ -1,6 +1,7 @@
 package io.github.waveng.sentinel.datasource.zookeeper.init;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.datasource.ReadableDataSource;
@@ -12,11 +13,13 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
+import com.alibaba.fastjson.JSON;
+import com.taobao.csp.sentinel.dashboard.datasource.entity.rule.SystemRuleEntity;
+import com.taobao.csp.sentinel.dashboard.util.RuleUtils;
 
 import io.github.waveng.sentinel.datasource.NodeType;
 import io.github.waveng.sentinel.datasource.zookeeper.ZookeeperAutoReadableDataSource;
 import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
-import io.github.waveng.sentinel.datasource.zookeeper.util.ConverterReadUtil;
 /**
  * 
  * @author wangbo 2018年10月15日 上午8:51:41
@@ -42,28 +45,54 @@ public class ReadableDataSourceRegister {
     
     public static void register2FlowRule() {
         
-        ReadableDataSource<String, List<FlowRule>> readDataSource = readDataSource(NodeType.NODE_FLOW, ZkRuleConfig.getFlowDataId(), ConverterReadUtil.CONVERTER_FLOW_RULES);
+        ReadableDataSource<String, List<FlowRule>> readDataSource = readDataSource(NodeType.NODE_FLOW, ZkRuleConfig.getFlowDataId(),
+         new Converter<String, List<FlowRule>>() {
+            @Override
+            public List<FlowRule> convert(String source) {
+                return RuleUtils.parseFlowRule(source);
+            }
+        });
         FlowRuleManager.register2Property(readDataSource.getProperty());
     }
 
     public static void register2DegradeRule() {
-        ReadableDataSource<String, List<DegradeRule>> readDataSource = readDataSource(NodeType.NODE_DEGRADE, ZkRuleConfig.getDegradeDataId(), ConverterReadUtil.CONVERTER_DEGRADE_RULE);
+        ReadableDataSource<String, List<DegradeRule>> readDataSource = readDataSource(NodeType.NODE_DEGRADE, ZkRuleConfig.getDegradeDataId(), 
+                new Converter<String, List<DegradeRule>>() {
+            @Override
+            public List<DegradeRule> convert(String source) {
+                return RuleUtils.parseDegradeRule(source);
+            }
+        });
         DegradeRuleManager.register2Property(readDataSource.getProperty());
     }
 
     public static void register2SystemRule() {
-        ReadableDataSource<String, List<SystemRule>> readDataSource = readDataSource(NodeType.NODE_SYSTEM, ZkRuleConfig.getSystemDataId(), ConverterReadUtil.CONVERTER_SYSTEM_RULE);
+        ReadableDataSource<String, List<SystemRule>> readDataSource = readDataSource(NodeType.NODE_SYSTEM, ZkRuleConfig.getSystemDataId(), 
+                new Converter<String, List<SystemRule>>() {
+            @Override
+            public List<SystemRule> convert(String source) {
+                return RuleUtils.parseSystemRule(source);
+            }
+        });
         SystemRuleManager.register2Property(readDataSource.getProperty());
         
     }
 
     public static void register2AuthorityRule() {
-        ReadableDataSource<String, List<AuthorityRule>> readDataSource = readDataSource(NodeType.NODE_AUTHORITY, ZkRuleConfig.getAuthorityDataId(), ConverterReadUtil.CONVERTER_AUTHORITY_RULE);
+        ReadableDataSource<String, List<AuthorityRule>> readDataSource = readDataSource(NodeType.NODE_AUTHORITY, ZkRuleConfig.getAuthorityDataId(), 
+                new Converter<String, List<AuthorityRule>>() {
+
+            @Override
+            public List<AuthorityRule> convert(String source) {
+                return RuleUtils.parseAuthorityRule(source);
+            }
+
+        });
         AuthorityRuleManager.register2Property(readDataSource.getProperty());
     }
 
     
-    private static <T> ReadableDataSource<String, T> readDataSource(final NodeType nodeType, String dataId, Converter<String,T> converter) {
+    public static <T> ReadableDataSource<String, T> readDataSource(final NodeType nodeType, String dataId, Converter<String,T> converter) {
         if (ZkRuleConfig.isGroupId()) {
             return new ZookeeperAutoReadableDataSource<>(nodeType, ZkRuleConfig.getGroupId(), dataId, converter);
         } else {
