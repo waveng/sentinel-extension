@@ -53,18 +53,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     
     public SentinelZkClientDataSource() {
         super();
-        initWritableFlow();
-        initWritableDegradee();
-        initWritableSystem();
-        initWritableAuthority();
+        initFlow();
+        initDegradee();
+        initSystem();
+        initAuthority();
         
-        intiReadableFlow();
-        intiReadableDegradee();
-        initReadableSystem();
-        initReadableAuthority();
         if(isPresent()){
-            initreadableParamFlow();
-            initwritableParamFlow();
+            initParamFlow();
             
         }
     }
@@ -73,7 +68,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
         return ClassUtils.isPresent("com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager", Thread.currentThread().getContextClassLoader());
     }
     
-    private  void initWritableFlow() {
+    private  void initFlow() {
         writableFlowDataSource = createWritable(NodeType.NODE_FLOW, new Converter<List<FlowRuleEntity>, byte[]>() {
 
             @Override
@@ -84,9 +79,16 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             }
 
         });
+        
+        readableFlowDataSource = createReadable(NodeType.NODE_FLOW,  new Converter<String, List<FlowRule>>() {
+            @Override
+            public List<FlowRule> convert(String source) {
+                return RuleUtils.parseFlowRule(source);
+            }
+        });
     }
 
-    private  void initWritableDegradee() {
+    private  void initDegradee() {
         writableDegradeDataSource = createWritable(NodeType.NODE_DEGRADE,  new Converter<List<DegradeRuleEntity>, byte[]>() {
 
             @Override
@@ -96,9 +98,16 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             }
 
         });
+        
+        readableDegradeDataSource = createReadable(NodeType.NODE_DEGRADE, new Converter<String, List<DegradeRule>>() {
+            @Override
+            public List<DegradeRule> convert(String source) {
+                return RuleUtils.parseDegradeRule(source);
+            }
+        });
     }
 
-    private  void initWritableSystem() {
+    private  void initSystem() {
         writableSystemDataSource = createWritable(NodeType.NODE_SYSTEM, new Converter<List<SystemRuleEntity>, byte[]>() {
 
             @Override
@@ -109,9 +118,16 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             }
 
         });
+        
+        readableSystemDataSource = createReadable(NodeType.NODE_SYSTEM, new Converter<String, List<SystemRule>>() {
+            @Override
+            public List<SystemRule> convert(String source) {
+                return RuleUtils.parseSystemRule(source);
+            }
+        });
     }
     
-    private void initWritableAuthority() {
+    private void initAuthority() {
 //      writableAuthority = createWritable(NodeType.NODE_AUTHORITY, new Converter<List<AuthorityRuleEntity>, byte[]>() {
 //
 //          @Override
@@ -122,9 +138,18 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
 //          }
 //
 //      });
+        
+        readableAuthorityDataSource = createReadable(NodeType.NODE_AUTHORITY, new Converter<String, List<AuthorityRule>>() {
+
+            @Override
+            public List<AuthorityRule> convert(String source) {
+                return RuleUtils.parseAuthorityRule(source);
+            }
+
+        });
     }
     
-    private  void initwritableParamFlow() {
+    private  void initParamFlow() {
         writableParamFlowDataSource = createWritable(NodeType.NODE_PARAM_FLOW, new Converter<List<ParamFlowRuleEntity>, byte[]>() {
 
             @Override
@@ -136,47 +161,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             }
 
         });
-    }
-    
-    private  void intiReadableFlow() {
-    
-        readableFlowDataSource = createReadable(NodeType.NODE_FLOW,  new Converter<String, List<FlowRule>>() {
-            @Override
-            public List<FlowRule> convert(String source) {
-                return RuleUtils.parseFlowRule(source);
-            }
-        });
-    }
-
-    private  void intiReadableDegradee() {
-        readableDegradeDataSource = createReadable(NodeType.NODE_DEGRADE, new Converter<String, List<DegradeRule>>() {
-            @Override
-            public List<DegradeRule> convert(String source) {
-                return RuleUtils.parseDegradeRule(source);
-            }
-        });
-    }
-
-    private  void initReadableSystem() {
-        readableSystemDataSource = createReadable(NodeType.NODE_SYSTEM, new Converter<String, List<SystemRule>>() {
-            @Override
-            public List<SystemRule> convert(String source) {
-                return RuleUtils.parseSystemRule(source);
-            }
-        });
-    }
-    
-    private  void initReadableAuthority() {
-        readableAuthorityDataSource = createReadable(NodeType.NODE_AUTHORITY, new Converter<String, List<AuthorityRule>>() {
-
-            @Override
-            public List<AuthorityRule> convert(String source) {
-                return RuleUtils.parseAuthorityRule(source);
-            }
-
-        });
-    }
-    private  void initreadableParamFlow() {
+        
         readableParamFlowDataSource = createReadable(NodeType.NODE_PARAM_FLOW, new Converter<String, List<ParamFlowRule>>() {
 
             @Override
@@ -186,7 +171,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
 
         });
     }
-
+    
 
     private static <S> Writable<S> createWritable(NodeType nodeType, Converter<S, byte[]> converter) {
         return new ZookeeperWritableDataSource<>(nodeType, converter);
