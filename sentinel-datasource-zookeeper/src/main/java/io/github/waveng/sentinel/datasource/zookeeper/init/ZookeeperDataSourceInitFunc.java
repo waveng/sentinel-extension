@@ -1,8 +1,10 @@
 package io.github.waveng.sentinel.datasource.zookeeper.init;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.csp.sentinel.init.InitFunc;
 import com.alibaba.csp.sentinel.init.InitOrder;
-import com.alibaba.csp.sentinel.log.RecordLog;
 
 import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
 /**
@@ -13,16 +15,16 @@ import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
  */
 @InitOrder(InitOrder.HIGHEST_PRECEDENCE)
 public class ZookeeperDataSourceInitFunc implements InitFunc {
-
+    private static Logger logger = LoggerFactory.getLogger(ZookeeperDataSourceInitFunc.class);
     @Override
     public void init() throws Exception {
         if(ZkRuleConfig.isClient()){
-            RecordLog.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ...");
+            logger.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ...");
             if(ZkRuleConfig.isRemoteAddress()){
                 ReadableDataSourceRegister.registerAll();
-                RecordLog.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ok");
+                logger.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ok");
             }else{
-                RecordLog.info("[ZookeeperDataSourceInitFunc] WARN: initial DataSourceRegister failed, Remote address DataSource of not setting");
+                logger.info("[ZookeeperDataSourceInitFunc] WARN: initial DataSourceRegister failed, Remote address DataSource of not setting");
             }
         }
     }

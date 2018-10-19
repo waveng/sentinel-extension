@@ -31,14 +31,14 @@ import io.github.waveng.sentinel.datasource.zookeeper.util.ConverterWritUtil;
 public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     private static Logger logger = LoggerFactory.getLogger(SentinelZkClientDataSource.class);
     
-    private Readable<String, List<FlowRuleEntity>> readableFlow;
-    private Readable<String, List<DegradeRuleEntity>> readableDegrade;
-    private Readable<String, List<SystemRuleEntity>> readableSystem;
-    private Readable<String, List<AuthorityRuleEntity>> readableAuthority;
+    private Readable<String, List<FlowRuleEntity>> readableFlowDataSource;
+    private Readable<String, List<DegradeRuleEntity>> readableDegradeDataSource;
+    private Readable<String, List<SystemRuleEntity>> readableSystemDataSource;
+    private Readable<String, List<AuthorityRuleEntity>> readableAuthorityDataSource;
     
-    private Writable<List<FlowRuleEntity>> writableFlow;
-    private Writable<List<DegradeRuleEntity>> writableDegrade;
-    private Writable<List<SystemRuleEntity>> writableSystem;
+    private Writable<List<FlowRuleEntity>> writableFlowDataSource;
+    private Writable<List<DegradeRuleEntity>> writableDegradeDataSource;
+    private Writable<List<SystemRuleEntity>> writableSystemDataSource;
 //   private Writable<List<AuthorityRuleEntity>> writableAuthority = null;
     
     public SentinelZkClientDataSource() {
@@ -55,15 +55,15 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     }
 
     private  void initWritableFlow() {
-        writableFlow = createWritable(NodeType.NODE_FLOW, ConverterWritUtil.FLOW_RULES_2BYTES);
+        writableFlowDataSource = createWritable(NodeType.NODE_FLOW, ConverterWritUtil.FLOW_RULES_2BYTES);
     }
 
     private  void initWritableDegradee() {
-        writableDegrade = createWritable(NodeType.NODE_DEGRADE, ConverterWritUtil.DEGRADE_RULE_2BYTES);
+        writableDegradeDataSource = createWritable(NodeType.NODE_DEGRADE, ConverterWritUtil.DEGRADE_RULE_2BYTES);
     }
 
     private  void initWritableSystem() {
-        writableSystem = createWritable(NodeType.NODE_SYSTEM, ConverterWritUtil.SYSTEM_RULE_2BYTES);
+        writableSystemDataSource = createWritable(NodeType.NODE_SYSTEM, ConverterWritUtil.SYSTEM_RULE_2BYTES);
     }
     
     private void initWritableAuthority() {
@@ -71,19 +71,19 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     }
     
     private  void intiReadableFlow() {
-        readableFlow = createReadable(NodeType.NODE_FLOW, ConverterReadUtil.CONVERTER_FLOW_RULES_ENTITY);
+        readableFlowDataSource = createReadable(NodeType.NODE_FLOW, ConverterReadUtil.CONVERTER_FLOW_RULES_ENTITY);
     }
 
     private  void intiReadableDegradee() {
-        readableDegrade = createReadable(NodeType.NODE_DEGRADE, ConverterReadUtil.CONVERTER_DEGRADE_RULE_ENTITY);
+        readableDegradeDataSource = createReadable(NodeType.NODE_DEGRADE, ConverterReadUtil.CONVERTER_DEGRADE_RULE_ENTITY);
     }
 
     private  void initReadableSystem() {
-        readableSystem = createReadable(NodeType.NODE_DEGRADE, ConverterReadUtil.CONVERTER_SYSTEM_RULE_ENTITY);
+        readableSystemDataSource = createReadable(NodeType.NODE_DEGRADE, ConverterReadUtil.CONVERTER_SYSTEM_RULE_ENTITY);
     }
     
     private  void initReadableAuthority() {
-        readableAuthority = createReadable(NodeType.NODE_AUTHORITY, ConverterReadUtil.CONVERTER_AUTHORITY_RULE_ENTITY);
+        readableAuthorityDataSource = createReadable(NodeType.NODE_AUTHORITY, ConverterReadUtil.CONVERTER_AUTHORITY_RULE_ENTITY);
     }
 
 
@@ -108,12 +108,14 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     @Override
     public List<FlowRuleEntity> fetchFlowRuleOfMachine(String app, String ip, int port) {
         List<FlowRuleEntity> data = null;
-        try {
-            data = readableFlow.read(app, ip, port);
-        } catch (Exception e) {
-            logger.error("readable flow error !", e);
+        if(readableFlowDataSource != null){
+            try {
+                data = readableFlowDataSource.read(app, ip, port);
+            } catch (Exception e) {
+                logger.warn("Reading flow rule error!", e);
+            }
         }
-        if(data == null){
+        if(data == null || data.isEmpty()){
             data = super.fetchFlowRuleOfMachine(app, ip, port);
         }
         return data;
@@ -122,12 +124,14 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     @Override
     public List<DegradeRuleEntity> fetchDegradeRuleOfMachine(String app, String ip, int port) {
         List<DegradeRuleEntity> data = null;
-        try {
-            data = readableDegrade.read(app, ip, port);
-        } catch (Exception e) {
-            logger.error("readable degrade error !", e);
+        if(readableDegradeDataSource != null){
+            try {
+                data = readableDegradeDataSource.read(app, ip, port);
+            } catch (Exception e) {
+                logger.warn("Reading degrade rule error!", e);
+            }
         }
-        if(data == null){
+        if(data == null || data.isEmpty()){
             data = super.fetchDegradeRuleOfMachine(app, ip, port);
         }
         return data;
@@ -136,12 +140,14 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     @Override
     public List<SystemRuleEntity> fetchSystemRuleOfMachine(String app, String ip, int port) {
         List<SystemRuleEntity> data = null;
-        try {
-            data = readableSystem.read(app, ip, port);
-        } catch (Exception e) {
-            logger.error("readable degrade error !", e);
+        if(readableSystemDataSource != null){
+            try {
+                data = readableSystemDataSource.read(app, ip, port);
+            } catch (Exception e) {
+                logger.warn("Reading system rule error!", e);
+            }
         }
-        if(data == null){
+        if(data == null || data.isEmpty()){
             data = super.fetchSystemRuleOfMachine(app, ip, port);
         }
         return data;
@@ -156,12 +162,14 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     @Override
     public List<AuthorityRuleEntity> fetchAuthorityRulesOfMachine(String app, String ip, int port) {
         List<AuthorityRuleEntity> data = null;
-        try {
-            data = readableAuthority.read(app, ip, port);
-        } catch (Exception e) {
-            logger.error("readable degrade error !", e);
+        if(readableAuthorityDataSource != null){
+            try {
+                data = readableAuthorityDataSource.read(app, ip, port);
+            } catch (Exception e) {
+                logger.warn("Reading authority rule error!", e);
+            }
         }
-        if(data == null){
+        if(data == null || data.isEmpty()){
             data = super.fetchAuthorityRulesOfMachine(app, ip, port);
         }
         return data;
@@ -169,34 +177,42 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
 
     @Override
     public boolean setFlowRuleOfMachine(String app, String ip, int port, List<FlowRuleEntity> rules) {
+        if(writableFlowDataSource == null){
+            return super.setFlowRuleOfMachine(app, ip, port, rules);
+        }
         try {
-            writableFlow.write(app, ip, port, rules);
+            writableFlowDataSource.write(app, ip, port, rules);
             return true;
         } catch (Exception e) {
-            logger.error("write flow error!", e);
+            logger.warn("Write flow rule error!", e);
         }
         return false;
     }
 
     @Override
     public boolean setDegradeRuleOfMachine(String app, String ip, int port, List<DegradeRuleEntity> rules) {
+        if(writableDegradeDataSource == null){
+            return super.setDegradeRuleOfMachine(app, ip, port, rules);
+        }
         try {
-            writableDegrade.write(app, ip, port, rules);
+            writableDegradeDataSource.write(app, ip, port, rules);
             return true;
         } catch (Exception e) {
-            logger.error("write degradee error!", e);
+            logger.warn("Write degradee rule error!", e);
         }
         return false;
     }
 
     @Override
     public boolean setSystemRuleOfMachine(String app, String ip, int port, List<SystemRuleEntity> rules) {
+        if(writableSystemDataSource == null){
+            return super.setSystemRuleOfMachine(app, ip, port, rules);
+        }
         try {
-            
-            writableSystem.write(app, ip, port, rules);
+            writableSystemDataSource.write(app, ip, port, rules);
             return true;
         } catch (Exception e) {
-            logger.error("write degradee error!", e);
+            logger.warn("Write system rule error!", e);
         }
         return false;
     }

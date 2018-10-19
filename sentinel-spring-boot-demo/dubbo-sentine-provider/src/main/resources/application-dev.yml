@@ -11,7 +11,7 @@ spring:
       owner: wangbo
       environment: develop
     registry:
-      address: zookeeper://192.168.16.2:2181
+      address: zookeeper://127.0.0.1:2181
     protocol:
       name: dubbo
       port: 20811
@@ -22,4 +22,4 @@ csp:
       name: dubbo-sentine-provider
       port: 8724
     zookeeper:
-      address: 192.168.16.2:2181
+      address: 127.0.0.1:2181

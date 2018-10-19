@@ -8,16 +8,18 @@ import java.util.concurrent.TimeUnit;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.NodeCacheListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
 import com.alibaba.csp.sentinel.datasource.AbstractDataSource;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.transport.config.TransportConfig;
 import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.csp.sentinel.util.HostNameUtil;
 import com.alibaba.csp.sentinel.util.StringUtil;
 
+import io.github.waveng.sentinel.datasource.NodeType;
 import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
 
 /**
@@ -26,7 +28,9 @@ import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
  */
 public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<String, T> {
 
-    private final String typePath;
+    private static Logger logger = LoggerFactory.getLogger(ZookeeperAutoReadableDataSource.class);
+            
+    private final String nodeType;
     
     private final ExecutorService pool = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
         new ArrayBlockingQueue<Runnable>(1), new NamedThreadFactory("sentinel-zookeeper-ds-update"),
@@ -38,13 +42,13 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
     private ZkClient zkClient = null;
     private NodeCache nodeCache = null;
 
-    public ZookeeperAutoReadableDataSource(final String typePath, final String dataId, Converter<String, T> parser) {
+    public ZookeeperAutoReadableDataSource(final NodeType nodeType, final String dataId, Converter<String, T> parser) {
         super(parser);
         if (StringUtil.isBlank(dataId)) {
             throw new IllegalArgumentException(String.format("Bad argument: dataId=[%s]", dataId));
         }
-        this.path = Util.getPath(AppNameUtil.getAppName(), dataId);
-        this.typePath = typePath;
+        this.path = Util.getPath(AppNameUtil.getAppName() + "/" + HostNameUtil.getIp() + ":" + TransportConfig.getPort(), dataId);
+        this.nodeType = nodeType.toString();
         
         init();
     }
@@ -52,14 +56,14 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
     /**
      * This constructor is Nacos-style.
      */
-    public ZookeeperAutoReadableDataSource(final String typePath, final String groupId, final String dataId,
+    public ZookeeperAutoReadableDataSource(final NodeType nodeType, final String groupId, final String dataId,
                                Converter<String, T> parser) {
         super(parser);
         if (StringUtil.isBlank(groupId) || StringUtil.isBlank(dataId)) {
             throw new IllegalArgumentException(String.format("Bad argument: groupId=[%s], dataId=[%s]", groupId, dataId));
         }
-        this.path = Util.getPath(groupId, dataId);
-        this.typePath = typePath;
+        this.path = Util.getPath(groupId  + "/" + HostNameUtil.getIp() + ":" + TransportConfig.getPort(), dataId);
+        this.nodeType = nodeType.toString();
         
         init();
     }
@@ -73,11 +77,11 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
         try {
             T newValue = loadConfig();
             if (newValue == null) {
-                RecordLog.warn("[ZookeeperDataSource] WARN: initial config is null, you may have to check your data source");
+                logger.warn("[ZookeeperAutoReadableDataSource] WARN: initial config is null, you may have to check your data source");
             }
             getProperty().updateValue(newValue);
         } catch (Exception ex) {
-            RecordLog.warn("[ZookeeperDataSource] Error when loading initial config", ex);
+            logger.warn("[ZookeeperAutoReadableDataSource] Error when loading initial config", ex);
         }
     }
 
@@ -88,14 +92,14 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
                 this.zkClient.createForPath(this.path);
             }
             
-            String typeAllPath = Util.getTypePath(AppNameUtil.getAppName(), HostNameUtil.getIp(), TransportConfig.getPort(), typePath);
+            String typeAllPath = Util.getTypePath(AppNameUtil.getAppName(), HostNameUtil.getIp(), TransportConfig.getPort(), nodeType);
             if (this.zkClient.checkExists(typeAllPath) == null) {
                 this.zkClient.createForPath(typeAllPath, this.path.getBytes());
             }
-            
+            this.zkClient.forPath(typeAllPath, this.path.getBytes());
             initZookeeperListener();
         } catch (Exception e) {
-            RecordLog.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
+            logger.warn("[ZookeeperAutoReadableDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
     }
@@ -112,7 +116,7 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
 
                         configInfo = new String(childData.getData());
                     }
-                    RecordLog.info(String.format("[ZookeeperDataSource] New property value received for (%s): %s", path, configInfo));
+                    logger.info(String.format("[ZookeeperAutoReadableDataSource] New property value received for (%s): %s", path, configInfo));
                     T newValue = ZookeeperAutoReadableDataSource.this.parser.convert(configInfo);
                     // Update the new value to the property.
                     getProperty().updateValue(newValue);
@@ -124,7 +128,7 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
             this.nodeCache.start();
             this.zkClient.addNodeCaches(nodeCache);
         } catch (Exception e) {
-            RecordLog.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
+            logger.warn("[ZookeeperAutoReadableDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
     }

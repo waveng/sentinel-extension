@@ -45,5 +45,5 @@ csp.sentinel.datasource.address
 使用 sentinel-spring-boot-starter 需要在配置中添加
 ```
 csp.sentinel.zookeeper.run-mode=dashboard
-csp.sentinel.zookeeper.address=192.168.16.2:2181
+csp.sentinel.zookeeper.address=127.0.0.1:2181
 ```

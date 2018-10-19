@@ -30,7 +30,7 @@ public class ZkRuleConfig {
 
     public static final String DEFAULT_FLOW_DATAID = "default-dataId-flow";
     public static final String DEFAULT_DEGRADE_DATAID = "default-dataId-degrade";
-    public static final String DEFAULT_SYSTEM_DATAID = "defaul-dataIdt-system";
+    public static final String DEFAULT_SYSTEM_DATAID = "default-dataIdt-system";
     public static final String DEFAULT_AUTHORITY_DATAID = "default-dataId-authority";
     
     static{

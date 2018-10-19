@@ -63,8 +63,11 @@ public class SentinelAutoConfiguration {
             return ;
         }
         if(StringUtil.isBlank(System.getProperty("project.name"))){
-            String name = application.getName();
-            if (StringUtil.isBlank(application.getName())){
+            String name = env.getProperty("project.name");
+            if (StringUtil.isBlank(name)){
+                name = application.getName();
+            }
+            if (StringUtil.isBlank(name)){
                 name = env.getProperty("spring.application.name");
             }
             if (StringUtil.isNotBlank(name)){
@@ -79,7 +82,8 @@ public class SentinelAutoConfiguration {
     }
     
     @Configuration
-    @ConditionalOnClass(name={"com.taobao.csp.sentinel.dashboard.client.spi.SentinelClientDataSource"})
+    @ConditionalOnClass(name={"com.taobao.csp.sentinel.dashboard.client.datasource.SentinelClientDataSource"})
+    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public class CreateSentinelClientDataSource{
         
         @Bean
