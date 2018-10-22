@@ -2,12 +2,12 @@ package io.github.waveng.sentinel.datasource.zookeeper.init;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ClassUtils;
 
 import com.alibaba.csp.sentinel.init.InitFunc;
 import com.alibaba.csp.sentinel.init.InitOrder;
 
 import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
+import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
 /**
  * 
  * @author wangbo 2018年10月15日 上午8:51:41
@@ -23,7 +23,7 @@ public class ZookeeperDataSourceInitFunc implements InitFunc {
             logger.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ...");
             if(ZkRuleConfig.isRemoteAddress()){
                 ReadableDataSourceRegister.registerAll();
-                if(isPresent()){
+                if(Util.isParamFlowRule()){
                     ReadableDataSourceRegisterParamFlowRule.register2SystemRule();
                 }
                 logger.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ok");
@@ -31,10 +31,6 @@ public class ZookeeperDataSourceInitFunc implements InitFunc {
                 logger.info("[ZookeeperDataSourceInitFunc] WARN: initial DataSourceRegister failed, Remote address DataSource of not setting");
             }
         }
-    }
-    
-    private static boolean isPresent(){
-        return ClassUtils.isPresent("com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager", Thread.currentThread().getContextClassLoader());
     }
 
 }

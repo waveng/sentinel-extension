@@ -9,7 +9,7 @@ csp:
       name: dubbo-sentine-provider
       port: 8724
     zookeeper:
-      address: 192.168.1.2:2181
+      address: 127.0.0.1:2181
       dataid-authority: 
       dataid-degrade: 
       dataid-flow: 
@@ -17,16 +17,7 @@ csp:
       group-id: 
 ```
 
-### 启用sentinel dubbo filter
-依赖
-```
-<dependency>
-    <groupId>com.alibaba.csp</groupId>
-    <artifactId>sentinel-dubbo-adapter</artifactId>
-    <version>x.x.x</version>
-</dependency>
-```
-启用
+### 启用
 ```
 @SpringBootApplication
 @EnableDubboConfiguration
@@ -41,9 +32,21 @@ public class ProviderMain {
 }
 ```
 
+
+### 启用sentinel dubbo filter
+加入sentinel-dubbo-adapter依赖即可
+```
+<dependency>
+    <groupId>com.alibaba.csp</groupId>
+    <artifactId>sentinel-dubbo-adapter</artifactId>
+    <version>x.x.x</version>
+</dependency>
+```
+
+
 ### 启用注解方式
 
-依赖
+排除 sentinel-dubbo-adapter， 加入sentinel-annotation-aspectj依赖即可
 ```
 <dependency>
     <groupId>com.alibaba.csp</groupId>
@@ -51,20 +54,7 @@ public class ProviderMain {
 </dependency>
 ```
 启用
-```
-@SpringBootApplication
-@EnableDubboConfiguration
-@EnableSentinelAspect
-public class ConsumerMain {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ConsumerMain.class, args);
-       
-    }
-
-
-}
-```
 
 使用注解暴露接口
 ```
@@ -87,7 +77,7 @@ public class DemoServiceImpl{
 当配置了 zookeeper.address 配置时启用，否则不启用
 ```
 zookeeper:
-      address: 192.168.1.2:2181
+      address: 127.0.0.1:2181
 ```
 
 ### sentinel-dashboard 支持

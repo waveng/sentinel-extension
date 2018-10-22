@@ -93,7 +93,7 @@ public class ReadableDataSourceRegister {
         if (ZkRuleConfig.isGroupId()) {
             return new ZookeeperAutoReadableDataSource<>(nodeType, ZkRuleConfig.getGroupId(), dataId, converter);
         } else {
-            return new ZookeeperAutoReadableDataSource<>(nodeType, dataId,converter);
+            return new ZookeeperAutoReadableDataSource<>(nodeType, dataId, converter);
             
         }
     }

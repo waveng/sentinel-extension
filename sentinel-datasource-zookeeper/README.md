@@ -27,7 +27,7 @@
       name: dubbo-sentine-provider
       port: 8724
     zookeeper:
-      address: 192.168.1.2:2181
+      address: 127.0.0.1:2181
       dataid-authority: 
       dataid-degrade: 
       dataid-flow: 

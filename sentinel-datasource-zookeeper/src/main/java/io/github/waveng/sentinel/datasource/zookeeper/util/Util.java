@@ -1,4 +1,7 @@
 package io.github.waveng.sentinel.datasource.zookeeper.util;
+
+import org.springframework.util.ClassUtils;
+
 /**
  * 
  * @author wangbo 2018年10月15日 上午8:51:41
@@ -32,5 +35,9 @@ public class Util {
     
     public static String getTypePath(String app, String ip, String port, String typePath) {
         return "/" + app + "/" + ip +":"+ port + "/rule-node-type/" + typePath;
+    }
+    
+    public static boolean isParamFlowRule(){
+        return ClassUtils.isPresent("com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager", Thread.currentThread().getContextClassLoader());
     }
 }

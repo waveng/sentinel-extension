@@ -16,7 +16,7 @@ public class ReadableDataSourceRegisterParamFlowRule {
 
     public static void register2SystemRule() {
         ReadableDataSource<String, List<ParamFlowRule>> readDataSource = ReadableDataSourceRegister
-                .readDataSource(NodeType.NODE_SYSTEM, ZkRuleConfig.getSystemDataId(), new Converter<String, List<ParamFlowRule>>() {
+                .readDataSource(NodeType.NODE_PARAM_FLOW, ZkRuleConfig.getParamFlowDataId(), new Converter<String, List<ParamFlowRule>>() {
 
                     @Override
                     public List<ParamFlowRule> convert(String source) {

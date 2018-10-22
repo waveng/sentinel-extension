@@ -1,15 +1,15 @@
 package io.github.waveng.sentinel.springboot;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * 
  * @author wangbo 2018年10月15日 上午8:51:41
  * @version 0.0.1
  * @since 0.0.1
  */
+@ConfigurationProperties(prefix = "csp.sentinel.zookeeper")
 public class ZookeeperProperties {
-        /**
-         * 运行在 client 还是 dashboard;
-         */
-        private String runMode;
         /**
          * zk访问地址
          */
@@ -34,16 +34,11 @@ public class ZookeeperProperties {
          * 黑白名单规则节点
          */
         private String dataidAuthority;
-
         
-        
-        public String getRunMode() {
-            return runMode;
-        }
-
-        public void setRunMode(String runMode) {
-            this.runMode = runMode;
-        }
+        /**
+         * 热点数据规则节点
+         */
+        private String dataidParamFlow;
 
         public String getAddress() {
             return address;
@@ -91,6 +86,14 @@ public class ZookeeperProperties {
 
         public void setDataidAuthority(String dataidAuthority) {
             this.dataidAuthority = dataidAuthority;
+        }
+
+        public String getDataidParamFlow() {
+            return dataidParamFlow;
+        }
+
+        public void setDataidParamFlow(String dataidParamFlow) {
+            this.dataidParamFlow = dataidParamFlow;
         }
 
     }

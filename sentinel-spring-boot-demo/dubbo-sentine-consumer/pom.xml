@@ -46,12 +46,14 @@
 		<dependency>
 			<groupId>io.github.waveng.sentinel</groupId>
 			<artifactId>sentinel-spring-boot-starter</artifactId>
+			<!-- 
 			<exclusions>
 				<exclusion>
 					<groupId>com.alibaba.csp</groupId>
 					<artifactId>sentinel-dubbo-adapter</artifactId>
 				</exclusion>
 			</exclusions>
+			 -->
 		</dependency>
 	</dependencies>
 

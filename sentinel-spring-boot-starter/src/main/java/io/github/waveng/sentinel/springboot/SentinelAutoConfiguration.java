@@ -28,44 +28,28 @@ import io.github.waveng.sentinel.datasource.zookeeper.dashboard.SentinelZkClient
  */
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
-@EnableConfigurationProperties(SentinelProperties.class)
-@AutoConfigureBefore({SentineFilterAutoConfiguration.class, SentinelAspectAutoConfiguration.class})
+@EnableConfigurationProperties(value ={ ZookeeperProperties.class, ApplicationProperties.class})
+@AutoConfigureBefore({SentinelAspectAutoConfiguration.class})
 public class SentinelAutoConfiguration {
     @Autowired
     private Environment env;
     
     @Autowired
-    private SentinelProperties sentinelProperties;
+    private ZookeeperProperties zookeeperProperties;
+    @Autowired
+    private ApplicationProperties applicationProperties;
     
     @PostConstruct
     public void init(){
         initAppConfig();
         initZkConfig();
     }
-    public void initZkConfig() {
-        ZookeeperProperties zk = sentinelProperties.getZookeeper();
-        if(zk == null){
-            return ;
-        }
-        if(StringUtil.isNotBlank(zk.getAddress())){
-            ZkRuleConfig.setRunMode(zk.getRunMode());
-            ZkRuleConfig.setRemoteAddress(zk.getAddress());
-            ZkRuleConfig.setFlowDataId(zk.getDataidFlow());
-            ZkRuleConfig.setDegradeDataId(zk.getDataidDegrade());
-            ZkRuleConfig.setSystemDataId(zk.getDataidSystem());
-            ZkRuleConfig.setAuthorityDataId(zk.getDataidAuthority());
-        }
-    }
-    
     public void initAppConfig() {
-        ApplicationProperties application = sentinelProperties.getApplication();
-        if(application == null){
-            return ;
-        }
+    
         if(StringUtil.isBlank(System.getProperty("project.name"))){
             String name = env.getProperty("project.name");
             if (StringUtil.isBlank(name)){
-                name = application.getName();
+                name = applicationProperties.getName();
             }
             if (StringUtil.isBlank(name)){
                 name = env.getProperty("spring.application.name");
@@ -75,19 +59,37 @@ public class SentinelAutoConfiguration {
             }
         }
         
-        if (StringUtil.isNotBlank(application.getDashboard()))
-            SentinelConfig.setConfig(TransportConfig.CONSOLE_SERVER, application.getDashboard());
-        if (StringUtil.isNotBlank(application.getPort()))
-            SentinelConfig.setConfig(TransportConfig.SERVER_PORT, application.getPort());
+        String runMode = applicationProperties.getRunMode();
+        if(StringUtil.isBlank(runMode)){
+            runMode = "client";
+        }
+        
+        ZkRuleConfig.setRunMode(runMode);
+        
+        if (StringUtil.isNotBlank(applicationProperties.getDashboard()))
+            SentinelConfig.setConfig(TransportConfig.CONSOLE_SERVER, applicationProperties.getDashboard());
+        if (StringUtil.isNotBlank(applicationProperties.getPort()))
+            SentinelConfig.setConfig(TransportConfig.SERVER_PORT, applicationProperties.getPort());
+    }
+    public void initZkConfig() {
+        if(StringUtil.isNotBlank(zookeeperProperties.getAddress())){
+            ZkRuleConfig.setRemoteAddress(zookeeperProperties.getAddress());
+            ZkRuleConfig.setGroupId(zookeeperProperties.getGroupId());
+            ZkRuleConfig.setFlowDataId(zookeeperProperties.getDataidFlow());
+            ZkRuleConfig.setDegradeDataId(zookeeperProperties.getDataidDegrade());
+            ZkRuleConfig.setSystemDataId(zookeeperProperties.getDataidSystem());
+            ZkRuleConfig.setAuthorityDataId(zookeeperProperties.getDataidAuthority());
+            ZkRuleConfig.setParamFlowDataId(zookeeperProperties.getDataidParamFlow());
+        }
     }
     
+    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     @Configuration
     @ConditionalOnClass(name={"com.taobao.csp.sentinel.dashboard.client.datasource.SentinelClientDataSource"})
-    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+    @ConditionalOnProperty(prefix="csp.sentinel.zookeeper", name="run-mode", havingValue="dashboard")
     public class CreateSentinelClientDataSource{
         
         @Bean
-        @ConditionalOnProperty(prefix="csp.sentinel.zookeeper", name="run-mode", havingValue="dashboard")
         public SentinelZkClientDataSource sentinelClientDataSource(){
             return new SentinelZkClientDataSource();
         }

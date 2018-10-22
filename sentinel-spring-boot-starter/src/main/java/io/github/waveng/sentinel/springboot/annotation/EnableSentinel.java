@@ -17,7 +17,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Enables
 public @interface EnableSentinel {
     
 }

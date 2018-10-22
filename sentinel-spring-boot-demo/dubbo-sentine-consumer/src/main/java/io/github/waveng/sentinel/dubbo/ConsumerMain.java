@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.boot.dubbo.annotation.EnableDubboConfiguration;
 
 import io.github.waveng.sentinel.dubbo.consumer.DemoServiceImpl;
-import io.github.waveng.sentinel.springboot.annotation.EnableSentinelAspect;
+import io.github.waveng.sentinel.springboot.annotation.EnableSentinel;
 
 @SpringBootApplication
 @EnableDubboConfiguration
-@EnableSentinelAspect
+@EnableSentinel
 @RestController
 public class ConsumerMain {
 

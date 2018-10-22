@@ -9,8 +9,8 @@ import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
-
-import com.alibaba.csp.sentinel.log.RecordLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
 /**
@@ -20,6 +20,7 @@ import io.github.waveng.sentinel.datasource.zookeeper.config.ZkRuleConfig;
  * @since 0.0.1
  */
 class ZkClient implements AutoCloseable{
+    private static Logger logger = LoggerFactory.getLogger(ZkClient.class);
     private static final int RETRY_TIMES = 3;
     private static final int SLEEP_TIME = 1000;
     private static final String NAMESPACE = "sentinel";
@@ -45,7 +46,7 @@ class ZkClient implements AutoCloseable{
             client.start();
             return client;
         } catch (Exception e) {
-            RecordLog.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
+            logger.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
         return null;

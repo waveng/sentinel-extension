@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ClassUtils;
 
 import com.alibaba.csp.sentinel.command.vo.NodeVo;
 import com.alibaba.csp.sentinel.datasource.Converter;
@@ -29,6 +28,7 @@ import io.github.waveng.sentinel.datasource.Readable;
 import io.github.waveng.sentinel.datasource.Writable;
 import io.github.waveng.sentinel.datasource.zookeeper.ZookeeperReadableDataSource;
 import io.github.waveng.sentinel.datasource.zookeeper.ZookeeperWritableDataSource;
+import io.github.waveng.sentinel.datasource.zookeeper.util.Util;
 /**
  * 
  * @author wangbo 2018年10月15日 上午8:51:41
@@ -58,16 +58,12 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
         initSystem();
         initAuthority();
         
-        if(isPresent()){
+        if(Util.isParamFlowRule()){
             initParamFlow();
             
         }
     }
 
-    private static boolean isPresent(){
-        return ClassUtils.isPresent("com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager", Thread.currentThread().getContextClassLoader());
-    }
-    
     private  void initFlow() {
         writableFlowDataSource = createWritable(NodeType.NODE_FLOW, new Converter<List<FlowRuleEntity>, byte[]>() {
 
