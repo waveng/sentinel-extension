@@ -77,11 +77,11 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
         try {
             T newValue = loadConfig();
             if (newValue == null) {
-                logger.warn("[ZookeeperAutoReadableDataSource] WARN: initial config is null, you may have to check your data source");
+                logger.warn("[Sentinel][ZookeeperAutoReadableDataSource] WARN: initial config is null, you may have to check your data source");
             }
             getProperty().updateValue(newValue);
         } catch (Exception ex) {
-            logger.warn("[ZookeeperAutoReadableDataSource] Error when loading initial config", ex);
+            logger.warn("[Sentinel][ZookeeperAutoReadableDataSource] Error when loading initial config", ex);
         }
     }
 
@@ -99,7 +99,7 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
             this.zkClient.forPath(typeAllPath, this.path.getBytes());
             initZookeeperListener();
         } catch (Exception e) {
-            logger.warn("[ZookeeperAutoReadableDataSource] Error occurred when initializing Zookeeper data source", e);
+            logger.warn("[Sentinel][ZookeeperAutoReadableDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
     }
@@ -116,7 +116,7 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
 
                         configInfo = new String(childData.getData());
                     }
-                    logger.info(String.format("[ZookeeperAutoReadableDataSource] New property value received for (%s): %s", path, configInfo));
+                    logger.info(String.format("[Sentinel][ZookeeperAutoReadableDataSource] New property value received for (%s): %s", path, configInfo));
                     T newValue = ZookeeperAutoReadableDataSource.this.parser.convert(configInfo);
                     // Update the new value to the property.
                     getProperty().updateValue(newValue);
@@ -128,7 +128,7 @@ public class ZookeeperAutoReadableDataSource<T> extends AbstractDataSource<Strin
             this.nodeCache.start();
             this.zkClient.addNodeCaches(nodeCache);
         } catch (Exception e) {
-            logger.warn("[ZookeeperAutoReadableDataSource] Error occurred when initializing Zookeeper data source", e);
+            logger.warn("[Sentinel][ZookeeperAutoReadableDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
     }

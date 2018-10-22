@@ -118,16 +118,17 @@ public class ZkRuleConfig {
             logger.info(e.getMessage(), e);
         }
         
-        
-        logger.info(RUN_MODE + " value: " + SentinelConfig.getConfig(RUN_MODE));
-        logger.info(REMOTE_ADDRESS + " value: " + SentinelConfig.getConfig(REMOTE_ADDRESS));
-        logger.info(GROUP_ID + " value: " + SentinelConfig.getConfig(GROUP_ID));
-        logger.info(FLOW_DATA_ID + " value: " + SentinelConfig.getConfig(FLOW_DATA_ID));
-        logger.info(DEGRADE_DATA_ID + " value: " + SentinelConfig.getConfig(DEGRADE_DATA_ID));
-        logger.info(SYSTEM_DATA_ID + " value: " + SentinelConfig.getConfig(SYSTEM_DATA_ID));
-        logger.info(AUTHORITY_DATA_ID + " value: " + SentinelConfig.getConfig(AUTHORITY_DATA_ID));
-        logger.info(PARAM_FLOW_DATA_ID + " value: " + SentinelConfig.getConfig(PARAM_FLOW_DATA_ID));
+    }
 
+    public static void printLog() {
+        logger.info("[Sentinel]" +  RUN_MODE + "default value: " + SentinelConfig.getConfig(RUN_MODE));
+        logger.info("[Sentinel]" + REMOTE_ADDRESS + " value: " + SentinelConfig.getConfig(REMOTE_ADDRESS));
+        logger.info("[Sentinel]" + GROUP_ID + " value: " + SentinelConfig.getConfig(GROUP_ID));
+        logger.info("[Sentinel]" + FLOW_DATA_ID + " value: " + SentinelConfig.getConfig(FLOW_DATA_ID));
+        logger.info("[Sentinel]" + DEGRADE_DATA_ID + " value: " + SentinelConfig.getConfig(DEGRADE_DATA_ID));
+        logger.info("[Sentinel]" + SYSTEM_DATA_ID + " value: " + SentinelConfig.getConfig(SYSTEM_DATA_ID));
+        logger.info("[Sentinel]" + AUTHORITY_DATA_ID + " value: " + SentinelConfig.getConfig(AUTHORITY_DATA_ID));
+        logger.info("[Sentinel]" + PARAM_FLOW_DATA_ID + " value: " + SentinelConfig.getConfig(PARAM_FLOW_DATA_ID));
     }
     
     

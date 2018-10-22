@@ -20,15 +20,15 @@ public class ZookeeperDataSourceInitFunc implements InitFunc {
     @Override
     public void init() throws Exception {
         if(ZkRuleConfig.isClient()){
-            logger.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ...");
+            logger.info("[Sentinel][ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ...");
             if(ZkRuleConfig.isRemoteAddress()){
                 ReadableDataSourceRegister.registerAll();
                 if(Util.isParamFlowRule()){
                     ReadableDataSourceRegisterParamFlowRule.register2SystemRule();
                 }
-                logger.info("[ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ok");
+                logger.info("[Sentinel][ZookeeperDataSourceInitFunc] info: initial DataSourceRegister ok");
             }else{
-                logger.info("[ZookeeperDataSourceInitFunc] WARN: initial DataSourceRegister failed, Remote address DataSource of not setting");
+                logger.info("[Sentinel][ZookeeperDataSourceInitFunc] WARN: initial DataSourceRegister failed, Remote address DataSource of not setting");
             }
         }
     }

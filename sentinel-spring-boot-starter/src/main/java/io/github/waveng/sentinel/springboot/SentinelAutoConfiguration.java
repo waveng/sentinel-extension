@@ -43,6 +43,7 @@ public class SentinelAutoConfiguration {
     public void init(){
         initAppConfig();
         initZkConfig();
+        ZkRuleConfig.printLog();
     }
     public void initAppConfig() {
     

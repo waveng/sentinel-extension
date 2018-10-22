@@ -197,7 +197,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {
-                logger.warn("Reading flow rule error!", e);
+                logger.warn("[Sentinel]Reading flow rule error!", e);
             }
         }
         return super.fetchFlowRuleOfMachine(app, ip, port);
@@ -213,7 +213,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {
-                logger.warn("Reading degrade rule error!", e);
+                logger.warn("[Sentinel]Reading degrade rule error!", e);
             }
         }
         return super.fetchDegradeRuleOfMachine(app, ip, port);
@@ -229,7 +229,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {
-                logger.warn("Reading system rule error!", e);
+                logger.warn("[Sentinel]Reading system rule error!", e);
             }
         }
         return super.fetchSystemRuleOfMachine(app, ip, port);
@@ -251,7 +251,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
                 }
                 
             } catch (Exception e) {
-                logger.warn("Reading param flow rule error!", e);
+                logger.warn("[Sentinel]Reading param flow rule error!", e);
             }
             
         }
@@ -269,7 +269,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {
-                logger.warn("Reading authority rule error!", e);
+                logger.warn("[Sentinel]Reading authority rule error!", e);
             }
         }
         if(data == null || data.isEmpty()){
@@ -287,7 +287,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             writableFlowDataSource.write(app, ip, port, rules);
             return true;
         } catch (Exception e) {
-            logger.warn("Write flow rule error!", e);
+            logger.warn("[Sentinel]Write flow rule error!", e);
         }
         return false;
     }
@@ -301,7 +301,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             writableDegradeDataSource.write(app, ip, port, rules);
             return true;
         } catch (Exception e) {
-            logger.warn("Write degradee rule error!", e);
+            logger.warn("[Sentinel]Write degradee rule error!", e);
         }
         return false;
     }
@@ -315,7 +315,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             writableSystemDataSource.write(app, ip, port, rules);
             return true;
         } catch (Exception e) {
-            logger.warn("Write system rule error!", e);
+            logger.warn("[Sentinel]Write system rule error!", e);
         }
         return false;
     }
@@ -330,7 +330,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             writableParamFlowDataSource.write(app, ip, port, rules);
             return CompletableFuture.completedFuture(null);
         } catch (Exception e) {
-            logger.warn("Error when setting parameter flow rule", e);
+            logger.warn("[Sentinel]Error when setting parameter flow rule", e);
             return newFailedFuture(e);
         }
     }

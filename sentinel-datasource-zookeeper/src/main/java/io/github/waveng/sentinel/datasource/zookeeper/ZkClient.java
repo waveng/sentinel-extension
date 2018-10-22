@@ -46,7 +46,7 @@ class ZkClient implements AutoCloseable{
             client.start();
             return client;
         } catch (Exception e) {
-            logger.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
+            logger.warn("[Sentinel] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
         }
         return null;

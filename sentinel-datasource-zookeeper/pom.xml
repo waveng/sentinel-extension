@@ -49,7 +49,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-demo-parameter-flow-control</artifactId>
+			<artifactId>sentinel-parameter-flow-control</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
