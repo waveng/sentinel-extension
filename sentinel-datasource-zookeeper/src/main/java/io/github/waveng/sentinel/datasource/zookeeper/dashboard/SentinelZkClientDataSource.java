@@ -48,7 +48,7 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     private Writable<List<FlowRuleEntity>> writableFlowDataSource;
     private Writable<List<DegradeRuleEntity>> writableDegradeDataSource;
     private Writable<List<SystemRuleEntity>> writableSystemDataSource;
-//   private Writable<List<AuthorityRuleEntity>> writableAuthority = null;
+   private Writable<List<AuthorityRuleEntity>> writableAuthorityDataSource;
     
     private Writable<List<ParamFlowRuleEntity>> writableParamFlowDataSource;
     
@@ -142,22 +142,22 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
     }
     
     private void initAuthority() {
-//      writableAuthority = createWritable(NodeType.NODE_AUTHORITY, new Converter<List<AuthorityRuleEntity>, byte[]>() {
-//
-//          @Override
-//          public byte[] convert(List<AuthorityRuleEntity> source) {
-//              return JSON.toJSONBytes(
-//                      source.stream().map(new Function<AuthorityRuleEntity, AuthorityRule>() {
-//
-//                          @Override
-//                          public AuthorityRule apply(AuthorityRuleEntity t) {
-//                              return t.getRule();
-//                          }
-//                      }).collect(Collectors.toList())
-//                  );
-//          }
-//
-//      });
+        writableAuthorityDataSource = createWritable(NodeType.NODE_AUTHORITY, new Converter<List<AuthorityRuleEntity>, byte[]>() {
+
+          @Override
+          public byte[] convert(List<AuthorityRuleEntity> source) {
+              return JSON.toJSONBytes(
+                      source.stream().map(new Function<AuthorityRuleEntity, AuthorityRule>() {
+
+                          @Override
+                          public AuthorityRule apply(AuthorityRuleEntity t) {
+                              return t.getRule();
+                          }
+                      }).collect(Collectors.toList())
+                  );
+          }
+
+      });
         
         readableAuthorityDataSource = createReadable(NodeType.NODE_AUTHORITY, new Converter<String, List<AuthorityRule>>() {
 
@@ -396,4 +396,19 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
         }
     }
     
+    @Override
+    public boolean setAuthorityRuleOfMachine(String app, String ip, int port, List<AuthorityRuleEntity> rules) {
+        if(writableAuthorityDataSource == null){
+            return super.setAuthorityRuleOfMachine(app, ip, port, rules);
+        }
+        
+        try {
+            writableAuthorityDataSource.write(app, ip, port, rules);
+            return true;
+        } catch (Exception e) {
+            logger.warn("Error when setting authority rule", e);
+        }
+        return false;
+        
+    }
 }
