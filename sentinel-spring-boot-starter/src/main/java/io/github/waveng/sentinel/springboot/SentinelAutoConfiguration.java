@@ -34,6 +34,8 @@ public class SentinelAutoConfiguration {
     @Autowired
     private Environment env;
     
+    private static String LOG_DIR = "csp.sentinel.log.dir";
+    
     @Autowired
     private ZookeeperProperties zookeeperProperties;
     @Autowired
@@ -46,7 +48,11 @@ public class SentinelAutoConfiguration {
         ZkRuleConfig.printLog();
     }
     public void initAppConfig() {
-    
+        
+        if(StringUtil.isBlank(System.getProperty(LOG_DIR)) && StringUtil.isNotBlank(applicationProperties.getLogdir())){
+            System.setProperty(LOG_DIR, applicationProperties.getLogdir());
+        }
+        
         if(StringUtil.isBlank(System.getProperty("project.name"))){
             String name = env.getProperty("project.name");
             if (StringUtil.isBlank(name)){
@@ -59,6 +65,7 @@ public class SentinelAutoConfiguration {
                 System.setProperty("project.name", name);
             }
         }
+       
         
         String runMode = applicationProperties.getRunMode();
         if(StringUtil.isBlank(runMode)){

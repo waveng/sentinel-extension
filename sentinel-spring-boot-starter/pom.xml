@@ -24,33 +24,11 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-core</artifactId>
-		</dependency>
 		
-		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-datasource-extension</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-transport-common</artifactId>
-		</dependency>
-			
-		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-dubbo-adapter</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
 			<artifactId>sentinel-annotation-aspectj</artifactId>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-transport-netty-http</artifactId>
 		</dependency>
 		
 		<dependency>

@@ -2,6 +2,7 @@ package io.github.waveng.sentinel.datasource.zookeeper.dashboard;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -71,7 +72,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             public byte[] convert(List<FlowRuleEntity> source) {
                 return JSON
                         .toJSONBytes(
-                                source.stream().map(FlowRuleEntity::toFlowRule).collect(Collectors.toList()));
+                                source.stream().map(new Function<FlowRuleEntity, FlowRule>() {
+                                    @Override
+                                    public FlowRule apply(FlowRuleEntity t) {
+                                        return t.toFlowRule();
+                                    }
+                                    
+                                }).collect(Collectors.toList()));
             }
 
         });
@@ -90,7 +97,12 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             @Override
             public byte[] convert(List<DegradeRuleEntity> source) {
                 return JSON
-                        .toJSONBytes(source.stream().map(DegradeRuleEntity::toDegradeRule).collect(Collectors.toList()));
+                        .toJSONBytes(source.stream().map(new Function<DegradeRuleEntity, DegradeRule>() {
+                            @Override
+                            public DegradeRule apply(DegradeRuleEntity t) {
+                                return t.toDegradeRule();
+                            }
+                        }).collect(Collectors.toList()));
             }
 
         });
@@ -109,7 +121,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             @Override
             public byte[] convert(List<SystemRuleEntity> source) {
                 return JSON.toJSONBytes(
-                        source.stream().map(SystemRuleEntity::toSystemRule).collect(Collectors.toList())
+                        source.stream().map(new Function<SystemRuleEntity, SystemRule>() {
+
+                            @Override
+                            public SystemRule apply(SystemRuleEntity t) {
+                                return t.toSystemRule();
+                            }
+                        }).collect(Collectors.toList())
                     );
             }
 
@@ -129,7 +147,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
 //          @Override
 //          public byte[] convert(List<AuthorityRuleEntity> source) {
 //              return JSON.toJSONBytes(
-//                      source.stream().map(AuthorityRuleEntity::getRule).collect(Collectors.toList())
+//                      source.stream().map(new Function<AuthorityRuleEntity, AuthorityRule>() {
+//
+//                          @Override
+//                          public AuthorityRule apply(AuthorityRuleEntity t) {
+//                              return t.getRule();
+//                          }
+//                      }).collect(Collectors.toList())
 //                  );
 //          }
 //
@@ -151,7 +175,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             @Override
             public byte[] convert(List<ParamFlowRuleEntity> source) {
                 return JSON.toJSONBytes(
-                        source.stream().map(ParamFlowRuleEntity::getRule).collect(Collectors.toList())
+                        source.stream().map(new Function<ParamFlowRuleEntity, ParamFlowRule>() {
+
+                            @Override
+                            public ParamFlowRule apply(ParamFlowRuleEntity t) {
+                                return t.getRule();
+                            }
+                        }).collect(Collectors.toList())
                     );
                
             }
@@ -193,8 +223,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             try {
                 List<FlowRule> rules = readableFlowDataSource.read(app, ip, port);
                 if(!(rules == null || rules.isEmpty())){
-                    return rules.stream().map(rule -> FlowRuleEntity.fromFlowRule(app, ip, port, rule))
-                        .collect(Collectors.toList());
+                    // Fix jetty error reporting "->"
+                    return rules.stream().map(new Function<FlowRule, FlowRuleEntity>() {
+                        @Override
+                        public FlowRuleEntity apply(FlowRule rule) {
+                            return FlowRuleEntity.fromFlowRule(app, ip, port, rule);
+                        }
+                    }).collect(Collectors.toList());
                 }
             } catch (Exception e) {
                 logger.warn("[Sentinel]Reading flow rule error!", e);
@@ -209,7 +244,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             try {
                 List<DegradeRule> rules =  readableDegradeDataSource.read(app, ip, port);
                 if(!(rules == null || rules.isEmpty())){
-                    return rules.stream().map(rule -> DegradeRuleEntity.fromDegradeRule(app, ip, port, rule))
+                    // Fix jetty error reporting "->"
+                    return rules.stream().map(new Function<DegradeRule, DegradeRuleEntity>() {
+                        @Override
+                        public DegradeRuleEntity apply(DegradeRule rule) {
+                            return DegradeRuleEntity.fromDegradeRule(app, ip, port, rule);
+                        }
+                    })
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {
@@ -225,7 +266,14 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             try {
                 List<SystemRule> rules = readableSystemDataSource.read(app, ip, port);
                 if(!(rules == null || rules.isEmpty())){
-                    return rules.stream().map(rule -> SystemRuleEntity.fromSystemRule(app, ip, port, rule))
+                    // Fix jetty error reporting "->"
+                    return rules.stream().map(new Function<SystemRule, SystemRuleEntity>() {
+
+                        @Override
+                        public SystemRuleEntity apply(SystemRule rule) {
+                            return SystemRuleEntity.fromSystemRule(app, ip, port, rule);
+                        }
+                    })
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {
@@ -242,9 +290,16 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             try {
                 List<ParamFlowRule> rules = readableParamFlowDataSource.read(app, ip, port);
                 if(!(rules == null || rules.isEmpty())){
+                    // Fix jetty error reporting "->"
                     future = new CompletableFuture<>();
                     future.complete(rules.stream()
-                            .map(e -> ParamFlowRuleEntity.fromAuthorityRule(app, ip, port, e))
+                            .map(new Function<ParamFlowRule, ParamFlowRuleEntity>() {
+                                @Override
+                                public ParamFlowRuleEntity apply(ParamFlowRule rule) {
+                                    // TODO Auto-generated method stub
+                                    return ParamFlowRuleEntity.fromAuthorityRule(app, ip, port, rule);
+                                }
+                            })
                             .collect(Collectors.toList()));
                     
                     return future;
@@ -265,7 +320,13 @@ public class SentinelZkClientDataSource extends SentinelApiClientDataSource{
             try {
                 List<AuthorityRule> rules = readableAuthorityDataSource.read(app, ip, port);
                 if(!(rules == null || rules.isEmpty())){
-                    return rules.stream().map(rule -> AuthorityRuleEntity.fromAuthorityRule(app, ip, port, rule))
+                    // Fix jetty error reporting "->"
+                    return rules.stream().map(new Function<AuthorityRule, AuthorityRuleEntity>() {
+                        @Override
+                        public AuthorityRuleEntity apply(AuthorityRule rule) {
+                            return AuthorityRuleEntity.fromAuthorityRule(app, ip, port, rule);
+                        }
+                    })
                         .collect(Collectors.toList());
                 }
             } catch (Exception e) {

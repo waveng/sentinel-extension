@@ -23,6 +23,10 @@ public class ApplicationProperties {
      * 应用名称，会在控制台中显示
      */
     private String name;
+    /**
+     * sentinel 日志
+     */
+    private String logdir;
     
     /**
      * 运行在 client 还是 dashboard;
@@ -60,6 +64,14 @@ public class ApplicationProperties {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLogdir() {
+        return logdir;
+    }
+
+    public void setLogdir(String logdir) {
+        this.logdir = logdir;
     }
 
 }
