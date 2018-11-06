@@ -40,7 +40,7 @@
 见分支 https://github.com/waveng/Sentinel/tree/custom-dashboard
 需要在配置中添加配置启用
 csp.sentinel.datasource.mode=dashboard
-csp.sentinel.datasource.address 
+csp.sentinel.datasource.address=127.0.0.1:2181
 
 使用 sentinel-spring-boot-starter 需要在配置中添加
 ```
