@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.github.waveng.sentinel</groupId>
     <artifactId>sentinel-spring-boot-demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
   <artifactId>dubbo-sentine-api</artifactId>
 </project>
